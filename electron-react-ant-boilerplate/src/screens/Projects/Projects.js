@@ -11,7 +11,7 @@ import ProjectList from "@/components/Projects/ProjectList";
 /**
  * Home
  *
- * @class Home
+ * @class Projects
  * @extends {Component}
  */
 class Projects extends Component {
@@ -24,6 +24,7 @@ class Projects extends Component {
       <Layout>
         <div className={styles.home}>
           <Path />
+
           <ProjectList />
         </div>
       </Layout>

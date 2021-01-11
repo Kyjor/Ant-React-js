@@ -2,14 +2,10 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="d71532be-334e-43cf-a076-fb0f6f2c53bd" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/electron-react-ant-boilerplate/src/components/Projects/ProjectList.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/electron-react-ant-boilerplate/src/components/Projects/ProjectList.scss" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/electron-react-ant-boilerplate/src/components/@shared/Header.js" beforeDir="false" afterPath="$PROJECT_DIR$/electron-react-ant-boilerplate/src/components/@shared/Header.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/electron-react-ant-boilerplate/src/routes/Root.js" beforeDir="false" afterPath="$PROJECT_DIR$/electron-react-ant-boilerplate/src/routes/Root.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/electron-react-ant-boilerplate/src/screens/Projects/Home.js" beforeDir="false" afterPath="$PROJECT_DIR$/electron-react-ant-boilerplate/src/screens/Projects/Projects.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/electron-react-ant-boilerplate/src/screens/Projects/Home.scss" beforeDir="false" afterPath="$PROJECT_DIR$/electron-react-ant-boilerplate/src/screens/Projects/Projects.scss" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/electron-react-ant-boilerplate/src/components/Projects/ProjectList.js" beforeDir="false" afterPath="$PROJECT_DIR$/electron-react-ant-boilerplate/src/components/Projects/ProjectList.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/electron-react-ant-boilerplate/src/screens/Projects/Projects.js" beforeDir="false" afterPath="$PROJECT_DIR$/electron-react-ant-boilerplate/src/screens/Projects/Projects.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/electron-react-ant-boilerplate/src/screens/Projects/Projects.scss" beforeDir="false" afterPath="$PROJECT_DIR$/electron-react-ant-boilerplate/src/screens/Projects/Projects.scss" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -20,7 +16,9 @@
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="ProjectId" id="1mvftPi7XYtqulypsCzdYC2YLYA" />
-  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true">
+    <ConfirmationsSetting value="1" id="Add" />
+  </component>
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
@@ -52,7 +50,7 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1610379204193</updated>
-      <workItem from="1610379209203" duration="5831000" />
+      <workItem from="1610379209203" duration="10145000" />
     </task>
     <servers />
   </component>
