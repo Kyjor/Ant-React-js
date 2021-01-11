@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-
+import styles from '../ProjectList.scss';
 class ProjectItems extends Component {
   createTasks(item) {
     return <li key={item.key}>{item.text}</li>
@@ -10,7 +10,7 @@ class ProjectItems extends Component {
     var listItems = projectEntries.map(this.createTasks);
 
     return (
-      <ul className="theList">
+      <ul className={styles.theList}>
         {listItems}
       </ul>
     );

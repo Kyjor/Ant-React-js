@@ -175,8 +175,11 @@ const config = {
     devServer: {
       host,
       port,
-      hot: true,
-      contentBase: "public",
+      watchOptions: {
+        poll: true,
+        ignored: '/node_modules/',
+      },
+      contentBase: ['./src', './public'],
       compress: true,
       inline: true,
       lazy: false,

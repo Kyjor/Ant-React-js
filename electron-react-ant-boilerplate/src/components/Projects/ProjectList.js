@@ -4,6 +4,7 @@ import React, { Component } from "react";
 import styles from "./ProjectList.scss";
 import {Button} from "antd";
 import ProjectItems from "./ProjectItems/ProjectItems";
+import "./ProjectList.scss";
 
 /**
  * ProjectList
@@ -44,21 +45,19 @@ class ProjectList extends Component {
 
   render() {
     return (
-      <><form>
-        <input ref={(a) => this._inputElement = a} placeholder="enter task">
 
-        </input>
+        <div className={styles.todoListMain}>
+          <div className={styles.header}>
+            <form onSubmit={this.addProject}>
+              <input ref={(a) => this._inputElement = a}
+                     placeholder="enter task">
+              </input>
+              <button type="submit">+</button>
+            </form>
+          </div>
+          <ProjectItems entries={this.state.items}/>
+        </div>
 
-        <Button type="submit" shape="circle">
-          +
-        </Button>
-      </form>
-
-      <div className={styles.helloWorld}>
-        Project
-        <ProjectItems entries={this.state.items}/>
-      </div>
-        </>
         );
   }
 }
