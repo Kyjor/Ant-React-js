@@ -1,8 +1,12 @@
 import React, { Component } from "react";
 import styles from '../ProjectList.scss';
+import {Link} from "react-router-dom";
 class ProjectItems extends Component {
   createTasks(item) {
-    return <li key={item.key}>{item.text}</li>
+    var projectName = item.text;
+    var listItem = <li key={item.key}><Link to={{pathname:"/projectPage",query: {projectName} }}>{item.text}</Link></li>;
+
+    return listItem;
   }
 
   render() {
