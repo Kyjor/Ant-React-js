@@ -7,6 +7,7 @@ import Layout from "@/layouts/App";
 // Components
 import Path from "@/components/Projects/Path";
 import ProjectList from "@/components/Projects/ProjectList";
+import {DragDropContext} from "react-beautiful-dnd";
 
 import initialData from "./initial-data";
 import Column from "./column";
@@ -28,6 +29,7 @@ class ProjectPage extends Component {
     this.loadProject = this.loadProject.bind(this);
     this.databaseInitialize = this.databaseInitialize.bind(this);
     this.addNodeToTable = this.addNodeToTable.bind(this);
+    this.onDragEnd = this.onDragEnd.bind(this);
     this.state = initialData;
   }
 
@@ -92,7 +94,9 @@ class ProjectPage extends Component {
     // table.addData(tabledata);
     // tabledata.length = 0;
   }
+onDragEnd = result => {
 
+}
 
   render() {
     return (
@@ -102,11 +106,14 @@ class ProjectPage extends Component {
           <div className={styles.home}>
             Hi
             <Path />
-            {this.state.columnOrder.map(columnId => {
-              const column = this.state.columns[columnId];
-              const tasks = column.taskIds.map(taskId => this.state.tasks[taskId]);
-              return <Column key={column.id} column={column} tasks={tasks}/>
-            })}
+            <DragDropContext onDragEnd={this.onDragEnd}>
+              {this.state.columnOrder.map(columnId => {
+                const column = this.state.columns[columnId];
+                const tasks = column.taskIds.map(taskId => this.state.tasks[taskId]);
+                return <Column key={column.id} column={column} tasks={tasks}/>
+              })}
+            </DragDropContext>
+
 
           </div>
         </Layout>
