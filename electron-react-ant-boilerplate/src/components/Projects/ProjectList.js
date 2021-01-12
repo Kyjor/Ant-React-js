@@ -5,6 +5,10 @@ import styles from "./ProjectList.scss";
 import {Button} from "antd";
 import ProjectItems from "./ProjectItems/ProjectItems";
 import "./ProjectList.scss";
+//const loki = require("lokijs");
+const projectFolder = './projects';
+const fs = window.require('fs');
+let lis = [];
 
 /**
  * ProjectList
@@ -19,7 +23,10 @@ class ProjectList extends Component {
       items: []
     };
     this.addProject = this.addProject.bind(this);
-
+    this.loadList = this.loadList.bind(this);
+  }
+  componentDidMount() {
+    window.addEventListener('load', this.loadList);
   }
   addProject(e)
   {
@@ -42,10 +49,72 @@ class ProjectList extends Component {
 
     e.preventDefault();
   }
+  loadList() {
+    let listIndex = 0;
+    console.log('loading list');
+    //ul.className = 'collection';
+    fs.readdir(projectFolder, (err, files) => {
+      console.log({files});
+      files.forEach(file => {
+        console.log(file);
+        const fileText = document.createTextNode(file);
+        if (file !== "") {
+          var newItem = {
+            text: file,
+            key: Date.now()
+          };
+
+          this.setState((prevState) => {
+            return {
+              items: prevState.items.concat(newItem)
+            };
+          });
+        }
+        listIndex++;
+        if (listIndex === files.length) {
+          //addListenersToList(lis);
+        }
+      });
+    });
+  }
+  loadProject(file)
+  {
+    if (file !== "") {
+      var newItem = {
+        text: file,
+        key: Date.now()
+      };
+
+      this.setState((prevState) => {
+        return {
+          items: prevState.items.concat(newItem)
+        };
+      });
+    }
+
+    console.log(this.state.items);
+  }
+
+
+
+  // addListenersToList(listObjects)
+  // {
+  //   let i;
+  //   for (i = 0; i < lis.length; i++)
+  //   {
+  //     console.log('hi');
+  //     lis[i].addEventListener('dblclick', function(event){
+  //       var targetElement = event.target || event.srcElement;
+  //       openProject(targetElement.innerHTML);
+  //     });
+  //     console.log(lis[i]);
+  //   }
+  //
+  // }
 
   render() {
     return (
-
+        <>
         <div className={styles.todoListMain}>
           <div className={styles.header}>
             <form onSubmit={this.addProject}>
@@ -57,6 +126,7 @@ class ProjectList extends Component {
           </div>
           <ProjectItems entries={this.state.items}/>
         </div>
+          </>
 
         );
   }
