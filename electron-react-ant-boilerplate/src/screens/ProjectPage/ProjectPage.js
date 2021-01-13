@@ -77,8 +77,8 @@ class ProjectPage extends Component {
   }
   addNodeToTable(node,index, arr)
   {
-    console.log(index)
-    console.log({node})
+    //console.log(index)
+    //console.log({node})
     // if (node.parent === undefined || node.parent === null)
     // {
     //   tabledata.push({id:node.$loki, name: node.name, desc: node.description, time: node.time});

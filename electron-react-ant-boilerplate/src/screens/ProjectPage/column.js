@@ -14,8 +14,20 @@ const Container = styled.div`
   display: flex;
   flex-direction: column;
 `;
+const TitleContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+`;
 const Title = styled.h3`
   padding: 8px;
+
+`;
+const AddButton = styled.button`
+  padding: 5px;
+  align-self:center;
+  margin-right: 5px;
+
 `;
 const TaskList = styled.div`
   padding: 8px;
@@ -26,23 +38,50 @@ const TaskList = styled.div`
 
 class InnerList extends React.Component
 {
-  shouldComponentUpdate(nextProps)
-  {
-    if(nextProps.tasks === this.props.tasks)
-    {
-      return false;
-    }
-    return true;
+  // shouldComponentUpdate(nextProps)
+  // {
+  //   if(nextProps.tasks === this.props.tasks)
+  //   {
+  //     return false;
+  //   }
+  //   return true;
+  // }
+  constructor() {
+    super();
+    this.callApi = this.callApi.bind(this);
+  }
+  callApi = () => {
+    console.log('render');
+    this.render();
   }
     render()
     {
+      console.log('Rendering tasks');
       return this.props.tasks.map((task,index) => (
-        <Task key={task.id} task={task} index={index}/>
+        <Task key={task.id} task={task} index={index}>
+          {console.log(task)}
+        </Task>
       ));
     }
 
 }
 export default class Column extends React.Component{
+  constructor(props) {
+    super(props)
+    this.addTask = this.addTask.bind(this)
+  }
+  addTask()
+  {
+    console.log('task');
+    const newTaskList = this.props.tasks;
+    newTaskList.push('task-5':({id: 'task-5', content: 'Take out the trash5'}))
+    const newState = {
+      ...this.state,
+      tasks: newTaskList,
+    };
+    this.setState(newState);
+    return;
+  }
   render() {
     return (
       <Draggable draggableId={this.props.column.id} index={this.props.index}>
@@ -52,8 +91,11 @@ export default class Column extends React.Component{
         {...provided.draggableProps}
         ref={provided.innerRef}
       >
-        <Title {...provided.dragHandleProps}>
-          {this.props.column.title}</Title>
+        <TitleContainer>
+          <Title {...provided.dragHandleProps}>
+            {this.props.column.title}</Title>
+          <AddButton onClick={this.addTask}>+</AddButton>
+        </TitleContainer>
         <Droppable
           droppableId={this.props.column.id}
           //type={this.props.column.id === 'column-3' ? 'done' : 'active'}
