@@ -7,6 +7,7 @@ import styled from 'styled-components';
 const Container = styled.div`
   margin: 8px;
   border: 1px solid lightgray;
+  background-color: white;
   border-radius: 2px;
   width: 220px;
 
@@ -18,10 +19,29 @@ const Title = styled.h3`
 `;
 const TaskList = styled.div`
   padding: 8px;
-  background-color: ${props => props.isDraggingOver ? 'skyblue' : 'white'};
+  background-color: ${props => props.isDraggingOver ? 'skyblue' : 'inherit'};
   flex-grow: 1;
   min-height: 200px;
 `;
+
+class InnerList extends React.Component
+{
+  shouldComponentUpdate(nextProps)
+  {
+    if(nextProps.tasks === this.props.tasks)
+    {
+      return false;
+    }
+    return true;
+  }
+    render()
+    {
+      return this.props.tasks.map((task,index) => (
+        <Task key={task.id} task={task} index={index}/>
+      ));
+    }
+
+}
 export default class Column extends React.Component{
   render() {
     return (
@@ -48,8 +68,7 @@ export default class Column extends React.Component{
                 {...provided.droppableProps}
                 isDraggingOver={snapshot.isDraggingOver}
               >
-
-                {this.props.tasks.map((task, index) => <Task key={task.id} task={task} index={index}/>)}
+                <InnerList tasks={this.props.tasks}/>
                 {provided.placeholder}
               </TaskList>
             </div>
