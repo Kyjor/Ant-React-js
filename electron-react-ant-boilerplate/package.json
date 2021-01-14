@@ -70,6 +70,7 @@
     "prop-types": "^15.7.2",
     "react": "^16.8.6",
     "react-beautiful-dnd": "^13.0.0",
+    "react-contenteditable": "^3.3.5",
     "react-dom": "^16.8.6",
     "react-router-dom": "^5.0.0",
     "styled-components": "^5.2.1"

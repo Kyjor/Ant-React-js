@@ -2,6 +2,7 @@ import React from 'react';
 import styles from './task.scss'
 import {Draggable} from "react-beautiful-dnd";
 import styled from "styled-components";
+import ContentEditable from 'react-contenteditable'
 
 const Container = styled.div`
     border-radius: 2px;
@@ -26,8 +27,19 @@ const Handle = styled.div`
 const EditButton = styled.button`
 `;
 export default class Task extends React.Component{
-
+  constructor(props) {
+    super(props);
+  }
+  handleTextChange = (evt, props) => {
+    console.log(evt.target.value)
+    console.log(props.task.id)
+    //this.setState({ content: evt.target.value });
+    props.updateTaskContent(evt.target.value, props.task.id);
+    console.log('Changed')
+  };
   render(){
+    const updateTaskContent = this.props.updateTaskContent;
+
     const isDragDisabled = this.props.task.id === 'task-1';
     const taskContent = this.props.task.content;
     return (
@@ -47,8 +59,10 @@ export default class Task extends React.Component{
                aria-roledescription="Press space bar to lift the task"
           >
             <Handle {...provided.dragHandleProps} />
-            taskContent
-          <EditButton />
+            <ContentEditable
+              html={taskContent}
+              onChange={(evt) => this.handleTextChange(evt,this.props)}
+            />
           </Container>
         )}
       </Draggable>

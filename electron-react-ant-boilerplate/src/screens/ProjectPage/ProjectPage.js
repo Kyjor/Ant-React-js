@@ -32,8 +32,9 @@ class InnerList extends React.PureComponent
     const { column, taskMap, index} = this.props;
     const tasks = column.taskIds.map(taskId => taskMap[taskId]);
     let createNewCard = this.props.createNewCard;
+    let updateTaskContent = this.props.updateTaskContent;
 
-    return <Column column={column} tasks={tasks} index={index} createNewCard = {createNewCard.bind(this)}/>
+    return <Column column={column} tasks={tasks} index={index} createNewCard = {createNewCard.bind(this)} updateTaskContent={updateTaskContent.bind(this)}/>
   }
 
 }
@@ -52,6 +53,7 @@ class ProjectPage extends Component {
     this.addNodeToTable = this.addNodeToTable.bind(this);
     this.onDragEnd = this.onDragEnd.bind(this);
     this.createNewCard = this.createNewCard.bind(this);
+    this.updateTaskContent = this.updateTaskContent.bind(this);
     this.state = initialData;
   }
 
@@ -79,6 +81,21 @@ class ProjectPage extends Component {
       tasks: newTaskList,
       columns: newColumns,
       count: newCount,
+    };
+    this.setState(newState);
+  }
+  updateTaskContent(newContent, taskId)
+  {
+    console.log('updating content')
+    const prevTasks = this.state.tasks;
+    const newTaskList = {
+      ...prevTasks,
+      [taskId]: {id: taskId, content: newContent},
+    }
+
+    const newState = {
+      ...this.state,
+      tasks: newTaskList,
     };
     this.setState(newState);
   }
@@ -272,6 +289,7 @@ onDragEnd = (result, provided) => {
                       taskMap={this.state.tasks}
                       index={index}
                       createNewCard = {this.createNewCard.bind(this)}
+                      updateTaskContent = {this.updateTaskContent.bind(this)}
                       />
                     )
                   })}
