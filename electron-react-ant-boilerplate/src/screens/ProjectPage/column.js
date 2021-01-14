@@ -36,7 +36,7 @@ const TaskList = styled.div`
   min-height: 200px;
 `;
 
-class InnerList extends React.Component
+class InnerList extends React.PureComponent
 {
   // shouldComponentUpdate(nextProps)
   // {
@@ -46,20 +46,11 @@ class InnerList extends React.Component
   //   }
   //   return true;
   // }
-  constructor() {
-    super();
-    this.callApi = this.callApi.bind(this);
-  }
-  callApi = () => {
-    console.log('render');
-    this.render();
-  }
+
     render()
     {
-      console.log('Rendering tasks');
       return this.props.tasks.map((task,index) => (
         <Task key={task.id} task={task} index={index}>
-          {console.log(task)}
         </Task>
       ));
     }
@@ -87,7 +78,7 @@ export default class Column extends React.Component{
         <TitleContainer>
           <Title {...provided.dragHandleProps}>
             {this.props.column.title}</Title>
-          <AddButton onClick={() => createNewCard()}>+</AddButton>
+          <AddButton onClick={() => createNewCard(this.props.column.id)}>+</AddButton>
         </TitleContainer>
         <Droppable
           droppableId={this.props.column.id}

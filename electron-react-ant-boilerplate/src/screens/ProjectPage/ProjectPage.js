@@ -55,7 +55,7 @@ class ProjectPage extends Component {
     this.state = initialData;
   }
 
-  createNewCard()
+  createNewCard(columnId)
   {
     const prevTasks = this.state.tasks;
     const newCount = this.state.count + 1;
@@ -67,9 +67,9 @@ class ProjectPage extends Component {
     let newColumns = this.state.columns;
     newColumns = {
       ...newColumns,
-      'column-1': {
-        ...newColumns['column-1'],
-        taskIds: [...newColumns['column-1'].taskIds, newId],
+      [columnId]: {
+        ...newColumns[columnId],
+        taskIds: [...newColumns[columnId].taskIds, newId],
       }
     }
     //newTaskList.push({['task-5']: {id: 'task-5', content: 'Take out the trash5'}})
@@ -146,7 +146,6 @@ class ProjectPage extends Component {
   onDragStart = (start, provided) => {
     provided.announce(`You have lifted the task in the position ${start.source.index + 1}`);
     const homeIndex = this.state.columnOrder.indexOf(start.source.droppableId);
-    document.body.style.color = 'orange';
     document.body.style.transition = 'background-color 0.2s ease';
     this.setState({
       homeIndex,

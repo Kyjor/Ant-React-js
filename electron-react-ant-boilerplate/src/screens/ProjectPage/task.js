@@ -23,10 +23,13 @@ const Handle = styled.div`
   border-radius: 4px;
   margin-right: 8px;
 `;
+const EditButton = styled.button`
+`;
 export default class Task extends React.Component{
 
   render(){
     const isDragDisabled = this.props.task.id === 'task-1';
+    const taskContent = this.props.task.content;
     return (
       <Draggable
         draggableId={this.props.task.id}
@@ -42,10 +45,11 @@ export default class Task extends React.Component{
                isDragging={snapshot.isDragging}
                isDragDisabled={isDragDisabled}
                aria-roledescription="Press space bar to lift the task"
-
           >
             <Handle {...provided.dragHandleProps} />
-            {this.props.task.content}</Container>
+            taskContent
+          <EditButton />
+          </Container>
         )}
       </Draggable>
     );
