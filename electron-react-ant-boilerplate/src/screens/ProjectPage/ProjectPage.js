@@ -26,11 +26,14 @@ const Container = styled.div`
 
 class InnerList extends React.PureComponent
 {
+
   render()
   {
     const { column, taskMap, index} = this.props;
     const tasks = column.taskIds.map(taskId => taskMap[taskId]);
-    return <Column column={column} tasks={tasks} index={index}/>
+    let createNewCard = this.props.createNewCard;
+
+    return <Column column={column} tasks={tasks} index={index} createNewCard = {createNewCard.bind(this)}/>
   }
 
 }
@@ -48,9 +51,37 @@ class ProjectPage extends Component {
     this.databaseInitialize = this.databaseInitialize.bind(this);
     this.addNodeToTable = this.addNodeToTable.bind(this);
     this.onDragEnd = this.onDragEnd.bind(this);
+    this.createNewCard = this.createNewCard.bind(this);
     this.state = initialData;
   }
 
+  createNewCard()
+  {
+    const prevTasks = this.state.tasks;
+    const newCount = this.state.count + 1;
+    const newId = `task-${newCount}`;
+    const newTaskList = {
+      ...prevTasks,
+      [newId]: {id: newId, content: `Take out the trash${newCount}`},
+    }
+    let newColumns = this.state.columns;
+    newColumns = {
+      ...newColumns,
+      'column-1': {
+        ...newColumns['column-1'],
+        taskIds: [...newColumns['column-1'].taskIds, newId],
+      }
+    }
+    //newTaskList.push({['task-5']: {id: 'task-5', content: 'Take out the trash5'}})
+
+    const newState = {
+      ...this.state,
+      tasks: newTaskList,
+      columns: newColumns,
+      count: newCount,
+    };
+    this.setState(newState);
+  }
   loadProject(projectName)
   {
     db = new loki(`./projects/${projectName}`, {
@@ -241,6 +272,7 @@ onDragEnd = (result, provided) => {
                       column={column}
                       taskMap={this.state.tasks}
                       index={index}
+                      createNewCard = {this.createNewCard.bind(this)}
                       />
                     )
                   })}

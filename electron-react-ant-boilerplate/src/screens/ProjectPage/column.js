@@ -72,17 +72,10 @@ export default class Column extends React.Component{
   }
   addTask()
   {
-    console.log('task');
-    const newTaskList = this.props.tasks;
-    newTaskList.push('task-5':({id: 'task-5', content: 'Take out the trash5'}))
-    const newState = {
-      ...this.state,
-      tasks: newTaskList,
-    };
-    this.setState(newState);
-    return;
+
   }
   render() {
+    let createNewCard = this.props.createNewCard;
     return (
       <Draggable draggableId={this.props.column.id} index={this.props.index}>
         {(provided) => (
@@ -94,7 +87,7 @@ export default class Column extends React.Component{
         <TitleContainer>
           <Title {...provided.dragHandleProps}>
             {this.props.column.title}</Title>
-          <AddButton onClick={this.addTask}>+</AddButton>
+          <AddButton onClick={() => createNewCard()}>+</AddButton>
         </TitleContainer>
         <Droppable
           droppableId={this.props.column.id}

@@ -1,4 +1,6 @@
 const initialData = {
+  count: 4,
+  newTask: '',
   tasks: {
     'task-1': { id: 'task-1', content: 'Take out the trash1'},
     'task-2': { id: 'task-2', content: 'Take out the trash2'},
