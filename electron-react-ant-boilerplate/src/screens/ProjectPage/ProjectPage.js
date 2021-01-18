@@ -10,8 +10,10 @@ import Layout from "@/layouts/App";
 import Path from "@/components/Projects/Path";
 import ProjectList from "@/components/Projects/ProjectList";
 import {DragDropContext, Droppable} from "react-beautiful-dnd";
+import LokiService from "../../services/LokiService"; // or wherever the above file is stored
 
-import initialData from "./initial-data";
+let myModule = require('./initial-data').init('test'); //Prints 'test'
+
 import Column from "./column";
 import Task from "./task";
 const loki = require("lokijs");
@@ -45,6 +47,18 @@ class InnerList extends React.PureComponent
  * @class Projects
  * @extends {Component}
  */
+exports.initProjectPage = function(init)
+{
+  console.log(init);
+  return this;
+};
+let initialData;
+exports.setInitialData = function (data)
+{
+  console.log(data);
+  initialData = data;
+}
+let isDBLoaded;
 class ProjectPage extends Component {
   constructor(props) {
     super(props);
@@ -54,19 +68,132 @@ class ProjectPage extends Component {
     this.onDragEnd = this.onDragEnd.bind(this);
     this.createNewCard = this.createNewCard.bind(this);
     this.updateTaskContent = this.updateTaskContent.bind(this);
-    this.state = initialData;
+    // this.fetchData = this.fetchData.bind(this);
+    // this.fetchData().then(r => {
+    //   this.state = r;
+    // });
+    this.testCallback = this.testCallback.bind(this);
+    //this.state = myModule.returnData();
+
+     // console.log(this.state);a
+    isDBLoaded = false;
+
+    this.state = {
+      lokiLoaded: false
+    }
+
+  }
+  testCallback () {
+    console.log('Im done');
+
+    const db = LokiService.getDb(() => {console.log('getDb') })
+    console.log(db);
+    dataNodes = db.getCollection("dataNodes", {
+      autoupdate: true
+    });
+    console.log(dataNodes)
+    console.log('1')
+    let cardData
+    let columnData
+    if(dataNodes !== null)
+    {
+       cardData = {
+        count: dataNodes.get(1).count,
+        newTask: dataNodes.get(1).newTask,
+        tasks: dataNodes.get(1).tasks,
+      }
+       columnData =
+        {
+          columns: dataNodes.get(2).columns,
+          columnOrder: dataNodes.get(2).columnOrder,
+        }
+    }
+    else if (dataNodes === null)
+    {
+      dataNodes = db.addCollection("dataNodes", {
+        autoupdate: true
+      })
+       cardData = dataNodes.insert(myModule.defaultCardInformation());
+       columnData =dataNodes.insert(myModule.defaultColumnInformation());
+    }
+    // const cardData = dataNodes !== null ? {
+    //   count: dataNodes.get(1).count,
+    //   newTask: dataNodes.get(1).newTask,
+    //   tasks: dataNodes.get(1).tasks,
+    // } : () => {
+    //   dataNodes = db.addCollection("dataNodes", {
+    //     autoupdate: true
+    //   })
+    //   dataNodes.insert(myModule.defaultCardInformation());
+    // };
+
+    console.log('2')
+
+    // const columnData = dataNodes !== null ?
+    //   {
+    //     columns: dataNodes.get(2).columns,
+    //     columnOrder: dataNodes.get(2).columnOrder,
+    //   }
+    //   : dataNodes.insert(myModule.defaultColumnInformation());
+    console.log('3')
+
+    initialData =
+      {
+        count: cardData.count,
+        newTask: cardData.newTask,
+        tasks: cardData.tasks,
+        columns: columnData.columns,
+        columnOrder: columnData.columnOrder,
+      }
+ //     :
+ //      {
+ //        count: cardData.count,
+ //        newTask: cardData.newTask,
+ //        tasks: cardData.tasks,
+ //        columns: columnData.columns,
+ //        columnOrder: columnData.columnOrder,
+ //      }
+    console.log('4')
+
+    db.saveDatabase();
+
+    const newState = {
+      ...this.state,
+      initialData
+    };
+    console.log('hi')
+    this.setState(newState);
+    //isDBLoaded = true;
+    console.log(this.state.initialData.tasks)
+  }
+  // componentDidMount() {
+  //   myModule.myMethod(this.testCallback);
+  // }
+  componentDidMount() {
+    LokiService.init(() => {
+      console.log('loaded')
+      this.testCallback();
+      this.setState({ lokiLoaded: true })
+      //myModule.myMethod(this.testCallback);
+
+    });
   }
 
+  fetchData = async () => {
+    let data  = await myModule.myMethod();
+    console.log(data);
+    return data;
+  }
   createNewCard(columnId)
   {
-    const prevTasks = this.state.tasks;
-    const newCount = this.state.count + 1;
+    const prevTasks = this.state.initialData.tasks;
+    const newCount = this.state.initialData.count + 1;
     const newId = `task-${newCount}`;
     const newTaskList = {
       ...prevTasks,
       [newId]: {id: newId, content: `Take out the trash${newCount}`},
     }
-    let newColumns = this.state.columns;
+    let newColumns = this.state.initialData.columns;
     newColumns = {
       ...newColumns,
       [columnId]: {
@@ -87,7 +214,7 @@ class ProjectPage extends Component {
   updateTaskContent(newContent, taskId)
   {
     console.log('updating content')
-    const prevTasks = this.state.tasks;
+    const prevTasks = this.state.initialData.tasks;
     const newTaskList = {
       ...prevTasks,
       [taskId]: {id: taskId, content: newContent},
@@ -162,7 +289,7 @@ class ProjectPage extends Component {
   }
   onDragStart = (start, provided) => {
     provided.announce(`You have lifted the task in the position ${start.source.index + 1}`);
-    const homeIndex = this.state.columnOrder.indexOf(start.source.droppableId);
+    const homeIndex = this.state.initialData.columnOrder.indexOf(start.source.droppableId);
     document.body.style.transition = 'background-color 0.2s ease';
     this.setState({
       homeIndex,
@@ -175,7 +302,7 @@ class ProjectPage extends Component {
     provided.announce(message);
     const { destination } = update;
     const opacity = destination
-    ? destination.index / Object.keys(this.state.tasks).length
+    ? destination.index / Object.keys(this.state.initialData.tasks).length
       : 0;
     document.body.style.backgroundColor = `rgba(153, 141, 217, ${opacity})`;
   }
@@ -200,7 +327,7 @@ onDragEnd = (result, provided) => {
   }
   if(type === 'column')
   {
-    const newColumnOrder = Array.from(this.state.columnOrder);
+    const newColumnOrder = Array.from(this.state.initialData.columnOrder);
     newColumnOrder.splice(source.index,1);
     newColumnOrder.splice(destination.index,0, draggableId);
     const newState = {
@@ -210,8 +337,8 @@ onDragEnd = (result, provided) => {
     this.setState(newState);
     return;
   }
-  const start = this.state.columns[source.droppableId]
-  const finish = this.state.columns[destination.droppableId]
+  const start = this.state.initialData.columns[source.droppableId]
+  const finish = this.state.initialData.columns[destination.droppableId]
 
   if (start === finish) {
     const newTaskIds = Array.from(start.taskIds);
@@ -225,7 +352,7 @@ onDragEnd = (result, provided) => {
     const newState = {
       ...this.state,
       columns: {
-        ...this.state.columns,
+        ...this.state.initialData.columns,
         [newColumn.id]: newColumn,
       },
     };
@@ -260,11 +387,12 @@ onDragEnd = (result, provided) => {
 };
 
   render() {
-    return (
-      <>
-        {this.loadProject('Cubby.json')}
+    {console.log(this.state.lokiLoaded)}
+      return this.state.lokiLoaded ? (
+        <>
+          {this.loadProject('Cubby.json')}
 
-        <Layout>
+          <Layout>
             <Path />
             <DragDropContext
               onDragEnd={this.onDragEnd}
@@ -280,29 +408,30 @@ onDragEnd = (result, provided) => {
                     {...provided.droppableProps}
                     ref={provided.innerRef}
                   >
-                  {this.state.columnOrder.map((columnId, index) => {
-                    const column = this.state.columns[columnId];
-                    return (
-                      <InnerList
-                      key={column.id}
-                      column={column}
-                      taskMap={this.state.tasks}
-                      index={index}
-                      createNewCard = {this.createNewCard.bind(this)}
-                      updateTaskContent = {this.updateTaskContent.bind(this)}
-                      />
-                    )
-                  })}
+                    {this.state.initialData.columnOrder.map((columnId, index) => {
+                      const column = this.state.initialData.columns[columnId];
+                      return (
+                        <InnerList
+                          key={column.id}
+                          column={column}
+                          taskMap={this.state.initialData.tasks}
+                          index={index}
+                          createNewCard = {this.createNewCard.bind(this)}
+                          updateTaskContent = {this.updateTaskContent.bind(this)}
+                        />
+                      )
+                    })}
                     {provided.placeholder}
-              </Container>
+                  </Container>
                 )}
               </Droppable>
             </DragDropContext>
-        </Layout>
-      </>
-
-    );
-  }
+          </Layout>
+        </>
+    ) : (
+      <div>Loading...</div>
+      );
+    }
 }
 
 export default ProjectPage;

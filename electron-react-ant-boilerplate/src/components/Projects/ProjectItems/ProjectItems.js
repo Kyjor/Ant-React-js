@@ -15,7 +15,7 @@ class ProjectItems extends Component {
 
     return (
       <ul className={styles.theList}>
-        {listItems}
+        { listItems}
       </ul>
     );
   }

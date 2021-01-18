@@ -26,7 +26,8 @@ class ProjectList extends Component {
     this.loadList = this.loadList.bind(this);
   }
   componentDidMount() {
-    window.addEventListener('load', this.loadList);
+    console.log('componentDidMount')
+    this.loadList();
   }
   addProject(e)
   {
