@@ -26,22 +26,40 @@ const Handle = styled.div`
 `;
 const EditButton = styled.button`
 `;
+let currentText = '';
+let currentCardId = null;
 export default class Task extends React.Component{
   constructor(props) {
     super(props);
+   // this.handleBlur = this.handleBlur.bind(this);
+  }
+  handleFocus = (evt) => {
+    var test = evt;
+    console.log(evt.target.innerText)
+    this.currentText = evt.target.innerText;
   }
   handleTextChange = (evt, props) => {
     console.log(evt.target.value)
     console.log(props.task.id)
     //this.setState({ content: evt.target.value });
-    props.updateTaskContent(evt.target.value, props.task.id);
+    currentText = evt.target.value;
+    currentCardId = props.task.id;
+   // props.updateTaskContent(evt.target.value, props.task.id);
     console.log('Changed')
   };
+  handleBlur = () => {
+    console.log('blur')
+    this.props.updateTaskContent(currentText,this.props.task.id);
+    currentText = '';
+  }
   render(){
     const updateTaskContent = this.props.updateTaskContent;
 
     const isDragDisabled = this.props.task.id === 'task-1';
-    const taskContent = this.props.task.content;
+    const taskContent = this.props.task.content === ''
+      ? 'empty'
+      : this.props.task.content
+    ;
     return (
       <Draggable
         draggableId={this.props.task.id}
@@ -62,6 +80,8 @@ export default class Task extends React.Component{
             <ContentEditable
               html={taskContent}
               onChange={(evt) => this.handleTextChange(evt,this.props)}
+              onFocus={(evt) => this.handleFocus(evt)}
+              onBlur={() => this.handleBlur()}
             />
           </Container>
         )}

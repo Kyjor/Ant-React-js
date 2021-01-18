@@ -5,14 +5,14 @@ class LokiService {
   constructor(props) {
     // initial property values
     this.db = null;
-    this.dbList = [];
+    this.dbList = {};
     // function bindings
     this.dbInitialized = this.dbInitialized.bind(this);
     this.init = this.init.bind(this);
     this.getDb = this.getDb.bind(this);
     this.getComments = this.getComments.bind(this);
     this.removeComments = this.removeComments.bind(this);
-    this.updateComments = this.updateComments.bind(this);
+    this.updateCard = this.updateCard.bind(this);
   }
 
   /**
@@ -22,6 +22,15 @@ class LokiService {
   dbInitialized = () => {
     // do something when the db is successfully set up
     console.log('initialized db')
+    this.dataNodes = this.db.getCollection("dataNodes", {
+      autoupdate: true
+    });
+
+    if (this.dataNodes === null) {
+      this.dataNodes = this.db.addCollection("dataNodes", {
+        autoupdate: true
+      });
+    }
   };
 
   /**
@@ -65,8 +74,12 @@ class LokiService {
   removeComments = commentIds => {
     // delete comments here and return execution status (or throw error)
   };
-  updateComments = comments => {
+  updateCard = (newContent, cardId) => {
     // update comments here and return execution status (or throw error)
+    let editedCard = this.dataNodes.get(1);
+    editedCard.tasks[cardId].content = newContent;
+    this.dataNodes.update(editedCard);
+    this.db.saveDatabase();
   };
 }
 

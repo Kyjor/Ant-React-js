@@ -159,12 +159,16 @@ class ProjectPage extends Component {
 
     const newState = {
       ...this.state,
-      initialData
+      count: cardData.count,
+      newTask: cardData.newTask,
+      tasks: cardData.tasks,
+      columns: columnData.columns,
+      columnOrder: columnData.columnOrder,
     };
     console.log('hi')
     this.setState(newState);
     //isDBLoaded = true;
-    console.log(this.state.initialData.tasks)
+    console.log(this.state.tasks)
   }
   // componentDidMount() {
   //   myModule.myMethod(this.testCallback);
@@ -186,14 +190,14 @@ class ProjectPage extends Component {
   }
   createNewCard(columnId)
   {
-    const prevTasks = this.state.initialData.tasks;
-    const newCount = this.state.initialData.count + 1;
+    const prevTasks = this.state.tasks;
+    const newCount = this.state.count + 1;
     const newId = `task-${newCount}`;
     const newTaskList = {
       ...prevTasks,
       [newId]: {id: newId, content: `Take out the trash${newCount}`},
     }
-    let newColumns = this.state.initialData.columns;
+    let newColumns = this.state.columns;
     newColumns = {
       ...newColumns,
       [columnId]: {
@@ -211,13 +215,14 @@ class ProjectPage extends Component {
     };
     this.setState(newState);
   }
-  updateTaskContent(newContent, taskId)
+  updateTaskContent(newContent, cardId)
   {
     console.log('updating content')
-    const prevTasks = this.state.initialData.tasks;
+    LokiService.updateCard(newContent,cardId);
+    const prevTasks = this.state.tasks;
     const newTaskList = {
       ...prevTasks,
-      [taskId]: {id: taskId, content: newContent},
+      [cardId]: {id: cardId, content: newContent},
     }
 
     const newState = {
@@ -289,7 +294,7 @@ class ProjectPage extends Component {
   }
   onDragStart = (start, provided) => {
     provided.announce(`You have lifted the task in the position ${start.source.index + 1}`);
-    const homeIndex = this.state.initialData.columnOrder.indexOf(start.source.droppableId);
+    const homeIndex = this.state.columnOrder.indexOf(start.source.droppableId);
     document.body.style.transition = 'background-color 0.2s ease';
     this.setState({
       homeIndex,
@@ -302,7 +307,7 @@ class ProjectPage extends Component {
     provided.announce(message);
     const { destination } = update;
     const opacity = destination
-    ? destination.index / Object.keys(this.state.initialData.tasks).length
+    ? destination.index / Object.keys(this.state.tasks).length
       : 0;
     document.body.style.backgroundColor = `rgba(153, 141, 217, ${opacity})`;
   }
@@ -327,7 +332,7 @@ onDragEnd = (result, provided) => {
   }
   if(type === 'column')
   {
-    const newColumnOrder = Array.from(this.state.initialData.columnOrder);
+    const newColumnOrder = Array.from(this.state.columnOrder);
     newColumnOrder.splice(source.index,1);
     newColumnOrder.splice(destination.index,0, draggableId);
     const newState = {
@@ -337,8 +342,8 @@ onDragEnd = (result, provided) => {
     this.setState(newState);
     return;
   }
-  const start = this.state.initialData.columns[source.droppableId]
-  const finish = this.state.initialData.columns[destination.droppableId]
+  const start = this.state.columns[source.droppableId]
+  const finish = this.state.columns[destination.droppableId]
 
   if (start === finish) {
     const newTaskIds = Array.from(start.taskIds);
@@ -352,7 +357,7 @@ onDragEnd = (result, provided) => {
     const newState = {
       ...this.state,
       columns: {
-        ...this.state.initialData.columns,
+        ...this.state.columns,
         [newColumn.id]: newColumn,
       },
     };
@@ -408,13 +413,13 @@ onDragEnd = (result, provided) => {
                     {...provided.droppableProps}
                     ref={provided.innerRef}
                   >
-                    {this.state.initialData.columnOrder.map((columnId, index) => {
-                      const column = this.state.initialData.columns[columnId];
+                    {this.state.columnOrder.map((columnId, index) => {
+                      const column = this.state.columns[columnId];
                       return (
                         <InnerList
                           key={column.id}
                           column={column}
-                          taskMap={this.state.initialData.tasks}
+                          taskMap={this.state.tasks}
                           index={index}
                           createNewCard = {this.createNewCard.bind(this)}
                           updateTaskContent = {this.updateTaskContent.bind(this)}
