@@ -120,8 +120,7 @@ function loadInitialData(node,index, arr)
 
  exports.defaultColumnInformation = function ()
   {
-    let columnInformation;
-    columnInformation = {
+   return  {
       columns:{
         'column-1': {
           id: 'column-1',
@@ -142,14 +141,21 @@ function loadInitialData(node,index, arr)
       columnOrder: ['column-1','column-2','column-3'],
     };
 
-    return columnInformation;
+  }
+
+  exports.setCard = function (id)
+  {
+    return {[`task-${id}`]: {id: `task-${id}`, content: 'Take out the trash'}}
+  }
+  exports.setColumn = function (id)
+  {
+    return {[`column-${id}`]: {id: `column-${id}`, taskIds: [`task-${id}`],}}
   }
 
 
    exports.defaultCardInformation = function ()
   {
-    let cardInformation;
-    cardInformation = {
+    return {
     count: 4,
       newTask: '',
     tasks: {
@@ -159,8 +165,6 @@ function loadInitialData(node,index, arr)
     'task-4': { id: 'task-4', content: 'Take out the trash4'},
   },
     };
-    console.log('edn')
-    return cardInformation;
   }
 
   // const initialData = {

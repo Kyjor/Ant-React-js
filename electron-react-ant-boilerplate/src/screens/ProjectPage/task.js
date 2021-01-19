@@ -35,20 +35,15 @@ export default class Task extends React.Component{
   }
   handleFocus = (evt) => {
     var test = evt;
-    console.log(evt.target.innerText)
     this.currentText = evt.target.innerText;
   }
   handleTextChange = (evt, props) => {
-    console.log(evt.target.value)
-    console.log(props.task.id)
     //this.setState({ content: evt.target.value });
     currentText = evt.target.value;
     currentCardId = props.task.id;
    // props.updateTaskContent(evt.target.value, props.task.id);
-    console.log('Changed')
   };
   handleBlur = () => {
-    console.log('blur')
     this.props.updateTaskContent(currentText,this.props.task.id);
     currentText = '';
   }

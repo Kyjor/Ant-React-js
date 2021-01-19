@@ -86,36 +86,124 @@ class ProjectPage extends Component {
   testCallback () {
     console.log('Im done');
 
-    const db = LokiService.getDb(() => {console.log('getDb') })
-    console.log(db);
-    dataNodes = db.getCollection("dataNodes", {
-      autoupdate: true
-    });
-    console.log(dataNodes)
+    //const db = LokiService.getDb(() => {console.log('getDb') })
+    //console.log(db);
+    // dataNodes = db.getCollection("dataNodes", {
+    //   autoupdate: true
+    // });
+    const cardNodes = LokiService.getCollection('cardNodes');
+    let x;
+    console.log('11')
+    if (cardNodes.get(1) === null)
+    {
+      for(x = 1; x < 6; x++)
+      {
+        cardNodes.insert
+        (
+          myModule.setCard(x)
+        )
+      }
+
+    }
+    console.log('121')
+
+
+    const cardCountNode = LokiService.getCollection('cardCountNode');
+    if(cardCountNode.get(1) === null)
+    {
+      cardCountNode.insert
+      (
+        {count: x,}
+      )
+    }
+    const cardTemplateNodes = LokiService.getCollection('cardTemplateNodes');
+    if(cardTemplateNodes.get(1) === null)
+    {
+      cardTemplateNodes.insert
+      (
+        {content: '',}
+      )
+    }
+    const columnCountNode = LokiService.getCollection('columnCountNode');
+    if(columnCountNode.get(1) === null)
+    {
+      columnCountNode.insert
+      (
+        {count: x}
+      )
+    }
+    const columnNodes = LokiService.getCollection('columnNodes');
+    if(columnNodes.get(1) === null)
+    {
+
+      for(x = 1; x < 6; x++)
+      {
+        columnNodes.insert
+        (
+          myModule.setColumn(x)
+        )
+      }
+    }
+    const columnOrderNode = LokiService.getCollection('columnOrderNode');
+    if(columnOrderNode.get(1) === null)
+    {
+      columnOrderNode.insert
+      (
+        {columnOrder: ['column-1','column-2','column-3','column-4','column-5'],}
+      )
+    }
+    LokiService.saveDB();
+    let task = cardNodes.get(1).content
+    let task1 = cardNodes.get(2).content
+    let task2 = cardNodes.get(3).content
+    let task3 = cardNodes.get(4).content
+    let task4 = cardNodes.get(5).content
+
+    let column1 = columnNodes.get(1)
+    let column2 = columnNodes.get(2)
+    let column3 = columnNodes.get(3)
+    let column4 = columnNodes.get(4)
+    let column5 = columnNodes.get(5)
+
+    console.log(cardNodes)
     console.log('1')
     let cardData
     let columnData
-    if(dataNodes !== null)
-    {
+    // if(dataNodes !== null)
+    // {
+      console.log('already exits')
        cardData = {
-        count: dataNodes.get(1).count,
-        newTask: dataNodes.get(1).newTask,
-        tasks: dataNodes.get(1).tasks,
+        count: cardCountNode.get(1).count,
+        newTask: cardTemplateNodes.get(1).content,
+        tasks: {
+          task,
+          task1,
+          task2,
+          task3,
+          task4,
+        }
       }
        columnData =
         {
-          columns: dataNodes.get(2).columns,
-          columnOrder: dataNodes.get(2).columnOrder,
+          columns: {
+            column1,
+            column2,
+            column3,
+            column4,
+            column5,
+          },
+          columnOrder: columnOrderNode.get(1).columnOrder,
         }
-    }
-    else if (dataNodes === null)
-    {
-      dataNodes = db.addCollection("dataNodes", {
-        autoupdate: true
-      })
-       cardData = dataNodes.insert(myModule.defaultCardInformation());
-       columnData =dataNodes.insert(myModule.defaultColumnInformation());
-    }
+    //}
+    // else if (dataNodes === null)
+    // {
+    //   console.log('creating new')
+    //   dataNodes = db.addCollection("dataNodes", {
+    //     autoupdate: true
+    //   })
+    //    cardData = dataNodes.insert(myModule.defaultCardInformation());
+    //    columnData =dataNodes.insert(myModule.defaultColumnInformation());
+    // }
     // const cardData = dataNodes !== null ? {
     //   count: dataNodes.get(1).count,
     //   newTask: dataNodes.get(1).newTask,
@@ -177,7 +265,7 @@ class ProjectPage extends Component {
     LokiService.init(() => {
       console.log('loaded')
       this.testCallback();
-      this.setState({ lokiLoaded: true })
+      //this.setState({ lokiLoaded: true })
       //myModule.myMethod(this.testCallback);
 
     });
@@ -192,10 +280,14 @@ class ProjectPage extends Component {
   {
     const prevTasks = this.state.tasks;
     const newCount = this.state.count + 1;
+
     const newId = `task-${newCount}`;
+    const newContent = `Take out the trash${newCount}`
+    console.log(newId + newContent + columnId)
+    LokiService.createCard(newId, newContent, columnId);
     const newTaskList = {
       ...prevTasks,
-      [newId]: {id: newId, content: `Take out the trash${newCount}`},
+      [newId]: {id: newId, content: newContent},
     }
     let newColumns = this.state.columns;
     newColumns = {
@@ -213,6 +305,7 @@ class ProjectPage extends Component {
       columns: newColumns,
       count: newCount,
     };
+    console.log('made it')
     this.setState(newState);
   }
   updateTaskContent(newContent, cardId)
