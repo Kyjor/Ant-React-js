@@ -54,8 +54,8 @@ class InnerList extends React.PureComponent
     {
       const updateTaskContent = this.props.updateTaskContent;
       return this.props.tasks.map((task,index) => (
-        <Task key={task.id} task={task} index={index} updateTaskContent = {(content,id) => updateTaskContent(content, id)} >
-        </Task>
+         <Task key={task.id} task={task} index={index} updateTaskContent = {(content,id) => updateTaskContent(content, id)} >
+         </Task>
       ));
     }
 
@@ -67,6 +67,7 @@ export default class Column extends React.Component{
   }
   addTask()
   {
+
 
   }
   render() {

@@ -22,6 +22,7 @@ class LokiService {
     this.removeComments = this.removeComments.bind(this);
     this.updateCard = this.updateCard.bind(this);
     this.saveDB = this.saveDB.bind(this);
+    this.updateCollection = this.updateCollection.bind(this);
   }
 
   /**
@@ -99,7 +100,7 @@ class LokiService {
   init = cb => {
     // run loki stuff here
     console.log('loading')
-    this.db = new loki("./projects/newghadsadahnewProject.json", {
+    this.db = new loki("./projects/Project.json", {
       // options
       autoload: true,
       autoloadCallback/* or dbInitialize?? whatever the property is for when the context is ready */: () => {
@@ -117,7 +118,24 @@ class LokiService {
   };
 
   getCollection = (collection) => {
-    return this.db.getCollection(collection);
+    if(collection === 'cardCountNode') { return this.cardCountNode }
+    if(collection === 'cardTemplateNodes') { return this.cardTemplateNodes }
+    if(collection === 'columnCountNode') { return this.columnCountNode }
+    if(collection === 'columnNodes') { return this.columnNodes }
+    if(collection === 'columnOrderNode') { return this.columnOrderNode }
+    if(collection === 'cardNodes') { return this.cardNodes }
+
+    return null;
+  }
+  updateCollection = (node) => {
+    this.cardCountNode.update(node)
+    this.db.saveDatabase()
+  }
+  insert = (newObject) => {
+    console.log('insert')
+    this.cardCountNode.insert(newObject)
+    this.db.saveDatabase()
+    console.log(this.cardCountNode)
   }
 
   /**
@@ -131,34 +149,17 @@ class LokiService {
    * @func updateCards
    *
    */
-  createCard = (cardId, cardContent, columnId) => {
-    console.log('increat card')
-    let cardsObject = this.dataNodes.get(1);
-    const prevCards = cardsObject.tasks;
-    const newCount = cardsObject.count + 1;
-    console.log(newCount)
-    const newCardList = {
-      ...prevCards,
-      [cardId] : {id: cardId, content: cardContent},
-    }
-    cardsObject.tasks = newCardList;
-    cardsObject.count = newCount;
-    console.log(cardsObject);
-    let columnsObject = this.dataNodes.get(2);
-    //const prevColumns = columnsObject.columns;
-    console.log(columnsObject)
-    //console.log(columnsObject.columns[columnId])
-    let newColumns = columnsObject.columns;
-      newColumns = {
-      ...newColumns,
-      [columnId]: {
-        ...newColumns[columnId],
-        taskIds: [...newColumns[columnId].taskIds, cardId],
-      }
-    }
-    columnsObject.columns = newColumns;
-    this.dataNodes.update(cardsObject);
-    this.dataNodes.update(columnsObject);
+  createCard = (cardId, cardContent, columnId, newCount) => {
+    let cardCount = this.cardCountNode.get(1);
+    console.log(this.cardCountNode)
+    cardCount.count = newCount;
+    let columnIdInt = parseInt(columnId.slice(7,8));
+    this.cardNodes.insert({id: cardId, content: cardContent});
+    let selectedColumn = this.columnNodes.get(columnIdInt);
+    selectedColumn.taskIds = [...selectedColumn.taskIds, cardId]
+
+    this.columnNodes.update(selectedColumn);
+    this.cardCountNode.update(cardCount);
     this.db.saveDatabase();
   }
   getComments = () => {
@@ -168,15 +169,16 @@ class LokiService {
     // delete comments here and return execution status (or throw error)
   };
   updateCard = ( cardId,cardContent) => {
+    let cardIdInt = parseInt(cardId.slice(5,6));
+    console.log(cardIdInt);
     // update cards here and return execution status (or throw error)
-    let cardsObject = this.dataNodes.get(1);
-    cardsObject.tasks[cardId].content = cardContent;
-    this.dataNodes.update(cardsObject);
+    let cardObject = this.cardNodes.get(cardIdInt);
+    cardObject.content = cardContent;
+    this.cardNodes.update(cardObject);
     this.db.saveDatabase();
   };
 
   saveDB = () => this.db.saveDatabase();
-
 }
 
 // create one instance of the class to export so everyone can share it

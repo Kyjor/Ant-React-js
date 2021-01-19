@@ -1,9 +1,7 @@
 // Libs
 import React, { Component } from "react";
-// Styles
-import styles from "./ProjectPage.scss";
+// Styled
 import styled from 'styled-components';
-
 // Layouts
 import Layout from "@/layouts/App";
 // Components
@@ -11,239 +9,126 @@ import Path from "@/components/Projects/Path";
 import ProjectList from "@/components/Projects/ProjectList";
 import {DragDropContext, Droppable} from "react-beautiful-dnd";
 import LokiService from "../../services/LokiService"; // or wherever the above file is stored
-
 let myModule = require('./initial-data').init('test'); //Prints 'test'
-
 import Column from "./column";
 import Task from "./task";
-const loki = require("lokijs");
-const fs = window.require('fs');
-let db;
-let dataNodes;
-let nodeList;
 
 const Container = styled.div`
   display: flex;
 `;
-
 class InnerList extends React.PureComponent
 {
-
   render()
   {
     const { column, taskMap, index} = this.props;
+    console.log(column)
     const tasks = column.taskIds.map(taskId => taskMap[taskId]);
+    console.log(tasks)
     let createNewCard = this.props.createNewCard;
     let updateTaskContent = this.props.updateTaskContent;
-
     return <Column column={column} tasks={tasks} index={index} createNewCard = {createNewCard.bind(this)} updateTaskContent={updateTaskContent.bind(this)}/>
   }
-
 }
-
 /**
  * Home
  *
  * @class Projects
  * @extends {Component}
  */
-exports.initProjectPage = function(init)
-{
-  console.log(init);
-  return this;
-};
-let initialData;
-exports.setInitialData = function (data)
-{
-  console.log(data);
-  initialData = data;
-}
-let isDBLoaded;
 class ProjectPage extends Component {
   constructor(props) {
     super(props);
-    this.loadProject = this.loadProject.bind(this);
-    this.databaseInitialize = this.databaseInitialize.bind(this);
-    this.addNodeToTable = this.addNodeToTable.bind(this);
     this.onDragEnd = this.onDragEnd.bind(this);
     this.createNewCard = this.createNewCard.bind(this);
     this.updateTaskContent = this.updateTaskContent.bind(this);
-    // this.fetchData = this.fetchData.bind(this);
-    // this.fetchData().then(r => {
-    //   this.state = r;
-    // });
     this.testCallback = this.testCallback.bind(this);
-    //this.state = myModule.returnData();
-
-     // console.log(this.state);a
-    isDBLoaded = false;
 
     this.state = {
       lokiLoaded: false
     }
-
   }
   testCallback () {
-    console.log('Im done');
-
-    //const db = LokiService.getDb(() => {console.log('getDb') })
-    //console.log(db);
-    // dataNodes = db.getCollection("dataNodes", {
-    //   autoupdate: true
-    // });
     const cardNodes = LokiService.getCollection('cardNodes');
     let x;
-    console.log('11')
-    if (cardNodes.get(1) === null)
+    //            nodeList = dataNodes.find({ 'Id': { '$ne': null } });
+    if (cardNodes.find({ 'Id': { '$ne': null } }).length === 0)
     {
+      console.log('empty, creating new data')
       for(x = 1; x < 6; x++)
       {
-        cardNodes.insert
-        (
-          myModule.setCard(x)
-        )
+        cardNodes.insert(myModule.newCard(x))
       }
-
     }
-    console.log('121')
-
+    //console.log(cardNodes..length.length)
 
     const cardCountNode = LokiService.getCollection('cardCountNode');
-    if(cardCountNode.get(1) === null)
+    if(cardCountNode.find({ 'Id': { '$ne': null } }).length === 0)
     {
-      cardCountNode.insert
-      (
-        {count: x,}
-      )
+      cardCountNode.insert({count: x-1,})
     }
+    console.log(LokiService.getCollection('cardCountNode').find({ 'Id': { '$ne': null } }).length)
     const cardTemplateNodes = LokiService.getCollection('cardTemplateNodes');
-    if(cardTemplateNodes.get(1) === null)
+    if(cardTemplateNodes.find({ 'Id': { '$ne': null } }).length === 0)
     {
-      cardTemplateNodes.insert
-      (
-        {content: '',}
-      )
+      cardTemplateNodes.insert({content: '',})
     }
     const columnCountNode = LokiService.getCollection('columnCountNode');
-    if(columnCountNode.get(1) === null)
+    if(columnCountNode.find({ 'Id': { '$ne': null } }).length === 0)
     {
-      columnCountNode.insert
-      (
-        {count: x}
-      )
+      columnCountNode.insert({count: x-1})
     }
     const columnNodes = LokiService.getCollection('columnNodes');
-    if(columnNodes.get(1) === null)
+    if(columnNodes.find({ 'Id': { '$ne': null } }).length === 0)
     {
-
       for(x = 1; x < 6; x++)
       {
-        columnNodes.insert
-        (
-          myModule.setColumn(x)
-        )
+        columnNodes.insert(myModule.newColumn(x))
       }
     }
     const columnOrderNode = LokiService.getCollection('columnOrderNode');
-    if(columnOrderNode.get(1) === null)
+    if(columnOrderNode.find({ 'Id': { '$ne': null } }).length === 0)
     {
-      columnOrderNode.insert
-      (
-        {columnOrder: ['column-1','column-2','column-3','column-4','column-5'],}
-      )
+      columnOrderNode.insert({columnOrder: ['column-1','column-2','column-3','column-4','column-5'],})
     }
+    //columnNodes.update(selectedColumn);
+    //cardCountNode.update(cardCountNode.get(1));
+    //LokiService.updateCollection(cardCountNode.get(1))
     LokiService.saveDB();
-    let task = cardNodes.get(1).content
-    let task1 = cardNodes.get(2).content
-    let task2 = cardNodes.get(3).content
-    let task3 = cardNodes.get(4).content
-    let task4 = cardNodes.get(5).content
 
-    let column1 = columnNodes.get(1)
-    let column2 = columnNodes.get(2)
-    let column3 = columnNodes.get(3)
-    let column4 = columnNodes.get(4)
-    let column5 = columnNodes.get(5)
 
-    console.log(cardNodes)
-    console.log('1')
     let cardData
     let columnData
-    // if(dataNodes !== null)
-    // {
-      console.log('already exits')
-       cardData = {
+    let cardList = cardNodes.find({ 'Id': { '$ne': null } });
+    console.log(cardList.length)
+    let columnList = columnNodes.find({ 'Id': { '$ne': null } });
+    let cards = {};
+    let allColumns = {};
+    cardList.forEach(card => {
+      cards = {
+        ...cards,
+        [card.id]:{id: card.id, content:card.content}
+      }
+    })
+
+    columnList.forEach(thisColumn => {
+      allColumns = {
+        ...allColumns,
+        [thisColumn.id]:{id:thisColumn.id, title:thisColumn.title, taskIds: thisColumn.taskIds}
+      }
+    })
+
+
+
+    cardData = {
         count: cardCountNode.get(1).count,
         newTask: cardTemplateNodes.get(1).content,
-        tasks: {
-          task,
-          task1,
-          task2,
-          task3,
-          task4,
-        }
+        tasks:cards,
       }
        columnData =
         {
-          columns: {
-            column1,
-            column2,
-            column3,
-            column4,
-            column5,
-          },
+          columns:allColumns,
           columnOrder: columnOrderNode.get(1).columnOrder,
         }
-    //}
-    // else if (dataNodes === null)
-    // {
-    //   console.log('creating new')
-    //   dataNodes = db.addCollection("dataNodes", {
-    //     autoupdate: true
-    //   })
-    //    cardData = dataNodes.insert(myModule.defaultCardInformation());
-    //    columnData =dataNodes.insert(myModule.defaultColumnInformation());
-    // }
-    // const cardData = dataNodes !== null ? {
-    //   count: dataNodes.get(1).count,
-    //   newTask: dataNodes.get(1).newTask,
-    //   tasks: dataNodes.get(1).tasks,
-    // } : () => {
-    //   dataNodes = db.addCollection("dataNodes", {
-    //     autoupdate: true
-    //   })
-    //   dataNodes.insert(myModule.defaultCardInformation());
-    // };
-
-    console.log('2')
-
-    // const columnData = dataNodes !== null ?
-    //   {
-    //     columns: dataNodes.get(2).columns,
-    //     columnOrder: dataNodes.get(2).columnOrder,
-    //   }
-    //   : dataNodes.insert(myModule.defaultColumnInformation());
-    console.log('3')
-
-    initialData =
-      {
-        count: cardData.count,
-        newTask: cardData.newTask,
-        tasks: cardData.tasks,
-        columns: columnData.columns,
-        columnOrder: columnData.columnOrder,
-      }
- //     :
- //      {
- //        count: cardData.count,
- //        newTask: cardData.newTask,
- //        tasks: cardData.tasks,
- //        columns: columnData.columns,
- //        columnOrder: columnData.columnOrder,
- //      }
-    console.log('4')
-
-    db.saveDatabase();
 
     const newState = {
       ...this.state,
@@ -253,51 +138,41 @@ class ProjectPage extends Component {
       columns: columnData.columns,
       columnOrder: columnData.columnOrder,
     };
-    console.log('hi')
     this.setState(newState);
-    //isDBLoaded = true;
-    console.log(this.state.tasks)
+    console.log(newState)
   }
-  // componentDidMount() {
-  //   myModule.myMethod(this.testCallback);
-  // }
+
   componentDidMount() {
     LokiService.init(() => {
       console.log('loaded')
       this.testCallback();
-      //this.setState({ lokiLoaded: true })
-      //myModule.myMethod(this.testCallback);
-
+      this.setState({ lokiLoaded: true })
     });
   }
 
-  fetchData = async () => {
-    let data  = await myModule.myMethod();
-    console.log(data);
-    return data;
-  }
   createNewCard(columnId)
   {
     const prevTasks = this.state.tasks;
     const newCount = this.state.count + 1;
-
     const newId = `task-${newCount}`;
     const newContent = `Take out the trash${newCount}`
-    console.log(newId + newContent + columnId)
-    LokiService.createCard(newId, newContent, columnId);
+    LokiService.createCard(newId, newContent, columnId, newCount);
+    console.log('exited')
+    const prevTaskIds = this.state.columns[columnId].taskIds;
+    const newTaskIds = [...prevTaskIds, newId]
     const newTaskList = {
       ...prevTasks,
       [newId]: {id: newId, content: newContent},
     }
+    console.log(newTaskList);
     let newColumns = this.state.columns;
     newColumns = {
       ...newColumns,
       [columnId]: {
         ...newColumns[columnId],
-        taskIds: [...newColumns[columnId].taskIds, newId],
+        taskIds: newTaskIds,
       }
     }
-    //newTaskList.push({['task-5']: {id: 'task-5', content: 'Take out the trash5'}})
 
     const newState = {
       ...this.state,
@@ -305,12 +180,10 @@ class ProjectPage extends Component {
       columns: newColumns,
       count: newCount,
     };
-    console.log('made it')
     this.setState(newState);
   }
   updateTaskContent(newContent, cardId)
   {
-    console.log('updating content')
     LokiService.updateCard(newContent,cardId);
     const prevTasks = this.state.tasks;
     const newTaskList = {
@@ -324,67 +197,7 @@ class ProjectPage extends Component {
     };
     this.setState(newState);
   }
-  loadProject(projectName)
-  {
-    db = new loki(`./projects/${projectName}`, {
-      autoload: true,
-      autoloadCallback : this.databaseInitialize,
-      autosave: true,
-      autosaveInterval: 4000
-    });
 
-  }
-  databaseInitialize() {
-    dataNodes = db.getCollection("dataNodes", {
-      autoupdate: true
-    });
-
-    if (dataNodes === null) {
-      dataNodes = db.addCollection("dataNodes", {
-        autoupdate: true
-      });
-    }
-    let x;
-    nodeList = dataNodes.find({ 'Id': { '$ne': null } });
-    nodeList.forEach(this.addNodeToTable)
-  }
-  addNodeToTable(node,index, arr)
-  {
-    //console.log(index)
-    //console.log({node})
-    // if (node.parent === undefined || node.parent === null)
-    // {
-    //   tabledata.push({id:node.$loki, name: node.name, desc: node.description, time: node.time});
-    // }
-    // else
-    // {
-    //   console.log({table});
-    //   var parentRow = table.getRow(node.parent);
-    //   if(parentRow === false)
-    //   {
-    //     var row = table.getRow(dataNodes.get(node.parent).parent);
-    //     var children = row.getTreeChildren();
-    //     console.log({children});
-    //     let x
-    //     for (x = 0; x < children.length; x++)
-    //     {
-    //       if (children[x]._row.data.id === node.parent)
-    //       {
-    //         parentRow = children[x];
-    //         console.log('found it');
-    //       }
-    //     }
-    //   }
-    //   console.log(node.parent);
-    //   console.log(parentRow);
-    //   console.log({parentRow});
-    //
-    //   parentRow.addTreeChild ({id:node.$loki,name:node.name, desc:node.description, time:node.time});
-    // }
-    //
-    // table.addData(tabledata);
-    // tabledata.length = 0;
-  }
   onDragStart = (start, provided) => {
     provided.announce(`You have lifted the task in the position ${start.source.index + 1}`);
     const homeIndex = this.state.columnOrder.indexOf(start.source.droppableId);
@@ -458,8 +271,7 @@ onDragEnd = (result, provided) => {
     this.setState(newState);
     return;
   }
-    //TODO: update lokijs data here}
-//  {this.loadProject(this.props.location.query.projectName)}
+
   const startTaskIds = Array.from(start.taskIds);
   startTaskIds.splice(source.index, 1);
   const  newStart = {
@@ -488,8 +300,6 @@ onDragEnd = (result, provided) => {
     {console.log(this.state.lokiLoaded)}
       return this.state.lokiLoaded ? (
         <>
-          {this.loadProject('Cubby.json')}
-
           <Layout>
             <Path />
             <DragDropContext
@@ -506,8 +316,11 @@ onDragEnd = (result, provided) => {
                     {...provided.droppableProps}
                     ref={provided.innerRef}
                   >
-                    {this.state.columnOrder.map((columnId, index) => {
+                    {
+
+                      this.state.columnOrder.map((columnId, index) => {
                       const column = this.state.columns[columnId];
+                      //console.log(column)
                       return (
                         <InnerList
                           key={column.id}
