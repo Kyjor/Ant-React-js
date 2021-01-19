@@ -21,9 +21,7 @@ class InnerList extends React.PureComponent
   render()
   {
     const { column, taskMap, index} = this.props;
-    console.log(column)
     const tasks = column.taskIds.map(taskId => taskMap[taskId]);
-    console.log(tasks)
     let createNewCard = this.props.createNewCard;
     let updateTaskContent = this.props.updateTaskContent;
     return <Column column={column} tasks={tasks} index={index} createNewCard = {createNewCard.bind(this)} updateTaskContent={updateTaskContent.bind(this)}/>
@@ -53,20 +51,17 @@ class ProjectPage extends Component {
     //            nodeList = dataNodes.find({ 'Id': { '$ne': null } });
     if (cardNodes.find({ 'Id': { '$ne': null } }).length === 0)
     {
-      console.log('empty, creating new data')
       for(x = 1; x < 6; x++)
       {
         cardNodes.insert(myModule.newCard(x))
       }
     }
-    //console.log(cardNodes..length.length)
 
     const cardCountNode = LokiService.getCollection('cardCountNode');
     if(cardCountNode.find({ 'Id': { '$ne': null } }).length === 0)
     {
       cardCountNode.insert({count: x-1,})
     }
-    console.log(LokiService.getCollection('cardCountNode').find({ 'Id': { '$ne': null } }).length)
     const cardTemplateNodes = LokiService.getCollection('cardTemplateNodes');
     if(cardTemplateNodes.find({ 'Id': { '$ne': null } }).length === 0)
     {
@@ -99,7 +94,6 @@ class ProjectPage extends Component {
     let cardData
     let columnData
     let cardList = cardNodes.find({ 'Id': { '$ne': null } });
-    console.log(cardList.length)
     let columnList = columnNodes.find({ 'Id': { '$ne': null } });
     let cards = {};
     let allColumns = {};
@@ -139,12 +133,10 @@ class ProjectPage extends Component {
       columnOrder: columnData.columnOrder,
     };
     this.setState(newState);
-    console.log(newState)
   }
 
   componentDidMount() {
     LokiService.init(() => {
-      console.log('loaded')
       this.testCallback();
       this.setState({ lokiLoaded: true })
     });
@@ -157,14 +149,12 @@ class ProjectPage extends Component {
     const newId = `task-${newCount}`;
     const newContent = `Take out the trash${newCount}`
     LokiService.createCard(newId, newContent, columnId, newCount);
-    console.log('exited')
     const prevTaskIds = this.state.columns[columnId].taskIds;
     const newTaskIds = [...prevTaskIds, newId]
     const newTaskList = {
       ...prevTasks,
       [newId]: {id: newId, content: newContent},
     }
-    console.log(newTaskList);
     let newColumns = this.state.columns;
     newColumns = {
       ...newColumns,
@@ -245,6 +235,7 @@ onDragEnd = (result, provided) => {
       ...this.state,
       columnOrder: newColumnOrder,
     };
+    LokiService.updateColumnOrder(newColumnOrder);
     this.setState(newState);
     return;
   }
@@ -267,7 +258,8 @@ onDragEnd = (result, provided) => {
         [newColumn.id]: newColumn,
       },
     };
-
+    console.log('changed task id order')
+    LokiService.updateColumnTaskIdOrder(newColumn)
     this.setState(newState);
     return;
   }
@@ -293,11 +285,11 @@ onDragEnd = (result, provided) => {
       [newFinish.id]: newFinish,
     },
   };
+  console.log('moved')
   this.setState(newState);
 };
 
   render() {
-    {console.log(this.state.lokiLoaded)}
       return this.state.lokiLoaded ? (
         <>
           <Layout>
@@ -320,7 +312,6 @@ onDragEnd = (result, provided) => {
 
                       this.state.columnOrder.map((columnId, index) => {
                       const column = this.state.columns[columnId];
-                      //console.log(column)
                       return (
                         <InnerList
                           key={column.id}

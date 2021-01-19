@@ -28,7 +28,6 @@ class App extends React.Component {
 
   componentDidMount() {
     LokiService.init(() => {
-      console.log('loaded')
       this.setState({ lokiLoaded: true })
     });
   }

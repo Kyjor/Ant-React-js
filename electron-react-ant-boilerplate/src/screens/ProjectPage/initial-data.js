@@ -11,7 +11,6 @@ exports.newColumn = function (id)
 
 exports.init = function(init)
 {
-  console.log(init);
   return this;
 };
 

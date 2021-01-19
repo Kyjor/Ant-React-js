@@ -21,6 +21,9 @@ class LokiService {
     this.getComments = this.getComments.bind(this);
     this.removeComments = this.removeComments.bind(this);
     this.updateCard = this.updateCard.bind(this);
+    this.updateColumnOrder = this.updateColumnOrder.bind(this);
+    this.updateColumnTaskIdOrder = this.updateColumnTaskIdOrder.bind(this);
+    this.updateTasksInColumns = this.updateTasksInColumns.bind(this);
     this.saveDB = this.saveDB.bind(this);
     this.updateCollection = this.updateCollection.bind(this);
   }
@@ -31,7 +34,6 @@ class LokiService {
    */
   dbInitialized = () => {
     // do something when the db is successfully set up
-    console.log('initialized db')
     this.cardCountNode = this.db.getCollection("cardCountNode", {
       autoupdate: true
     });
@@ -99,7 +101,6 @@ class LokiService {
    */
   init = cb => {
     // run loki stuff here
-    console.log('loading')
     this.db = new loki("./projects/Project.json", {
       // options
       autoload: true,
@@ -111,9 +112,7 @@ class LokiService {
   };
 
   getDb = () => {
-  console.log('gettingDB')
 
-    console.log(this.db)
     return  this.db;
   };
 
@@ -131,11 +130,10 @@ class LokiService {
     this.cardCountNode.update(node)
     this.db.saveDatabase()
   }
+
   insert = (newObject) => {
-    console.log('insert')
     this.cardCountNode.insert(newObject)
     this.db.saveDatabase()
-    console.log(this.cardCountNode)
   }
 
   /**
@@ -151,7 +149,6 @@ class LokiService {
    */
   createCard = (cardId, cardContent, columnId, newCount) => {
     let cardCount = this.cardCountNode.get(1);
-    console.log(this.cardCountNode)
     cardCount.count = newCount;
     let columnIdInt = parseInt(columnId.slice(7,8));
     this.cardNodes.insert({id: cardId, content: cardContent});
@@ -170,13 +167,32 @@ class LokiService {
   };
   updateCard = ( cardId,cardContent) => {
     let cardIdInt = parseInt(cardId.slice(5,6));
-    console.log(cardIdInt);
     // update cards here and return execution status (or throw error)
     let cardObject = this.cardNodes.get(cardIdInt);
     cardObject.content = cardContent;
     this.cardNodes.update(cardObject);
     this.db.saveDatabase();
   };
+
+  updateColumnOrder = (columnOrder) => {
+    let order = this.columnOrderNode.get(1);
+    order.columnOrder = columnOrder;
+    this.columnOrderNode.update(order);
+    this.db.saveDatabase();
+  }
+  updateColumnTaskIdOrder = (newColumn) => {
+
+    let columnIdInt = parseInt(newColumn.id.slice(7,8));
+    let column = this.columnNodes.get(columnIdInt);
+    console.log(column)
+    column = newColumn;
+    this.columnNodes.update(column);
+    this.db.saveDatabase();
+
+  }
+  updateTasksInColumns = (newStart, newFinish) => {
+    console.log()
+  }
 
   saveDB = () => this.db.saveDatabase();
 }
