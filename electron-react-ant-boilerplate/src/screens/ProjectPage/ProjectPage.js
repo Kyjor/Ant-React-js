@@ -12,6 +12,8 @@ import LokiService from "../../services/LokiService"; // or wherever the above f
 let myModule = require('./initial-data').init('test'); //Prints 'test'
 import Column from "./column";
 import Task from "./task";
+import { Modal, Button } from 'antd';
+
 
 const Container = styled.div`
   display: flex;
@@ -23,8 +25,9 @@ class InnerList extends React.PureComponent
     const { column, taskMap, index} = this.props;
     const tasks = column.taskIds.map(taskId => taskMap[taskId]);
     let createNewCard = this.props.createNewCard;
+    let showModal = this.props.showModal;
     let updateTaskContent = this.props.updateTaskContent;
-    return <Column column={column} tasks={tasks} index={index} createNewCard = {createNewCard.bind(this)} updateTaskContent={updateTaskContent.bind(this)}/>
+    return <Column column={column} tasks={tasks} index={index} createNewCard = {createNewCard.bind(this)}showModal={showModal.bind(this)} updateTaskContent={updateTaskContent.bind(this)}/>
   }
 }
 /**
@@ -40,6 +43,7 @@ class ProjectPage extends Component {
     this.createNewCard = this.createNewCard.bind(this);
     this.updateTaskContent = this.updateTaskContent.bind(this);
     this.testCallback = this.testCallback.bind(this);
+    this.showModal = this.showModal.bind(this);
 
     this.state = {
       lokiLoaded: false
@@ -90,7 +94,6 @@ class ProjectPage extends Component {
     //LokiService.updateCollection(cardCountNode.get(1))
     LokiService.saveDB();
 
-
     let cardData
     let columnData
     let cardList = cardNodes.find({ 'Id': { '$ne': null } });
@@ -110,8 +113,6 @@ class ProjectPage extends Component {
         [thisColumn.id]:{id:thisColumn.id, title:thisColumn.title, taskIds: thisColumn.taskIds}
       }
     })
-
-
 
     cardData = {
         count: cardCountNode.get(1).count,
@@ -289,12 +290,51 @@ onDragEnd = (result, provided) => {
   LokiService.updateTasksInColumns(newStart, newFinish);
   this.setState(newState);
 };
+  showModal = (cardContent) => {
+    console.log(cardContent)
+    this.setState({
+      visible: true,
+      modalContent: cardContent,
+    });
+  };
+
+  handleOk = e => {
+    console.log(e);
+    this.setState({
+      visible: false,
+
+    });
+  };
+
+  handleCancel = e => {
+    console.log(e);
+    this.setState({
+      visible: false,
+      modalContent: '',
+
+    });
+  };
 
   render() {
       return this.state.lokiLoaded ? (
         <>
           <Layout>
             <Path />
+            <div>
+            <Button type="primary" onClick={this.showModal}>
+              Open Modal
+            </Button>
+            <Modal
+              title="Basic Modal"
+              visible={this.state.visible}
+              onOk={this.handleOk}
+              onCancel={this.handleCancel}
+            >
+              <p>{this.state.modalContent}</p>
+              <p>Some contents...</p>
+              <p>Some contents...</p>
+            </Modal>
+          </div>
             <DragDropContext
               onDragEnd={this.onDragEnd}
               onDragUpdate={this.onDragUpdate}
@@ -309,9 +349,7 @@ onDragEnd = (result, provided) => {
                     {...provided.droppableProps}
                     ref={provided.innerRef}
                   >
-                    {
-
-                      this.state.columnOrder.map((columnId, index) => {
+                    {this.state.columnOrder.map((columnId, index) => {
                       const column = this.state.columns[columnId];
                       return (
                         <InnerList
@@ -321,9 +359,9 @@ onDragEnd = (result, provided) => {
                           index={index}
                           createNewCard = {this.createNewCard.bind(this)}
                           updateTaskContent = {this.updateTaskContent.bind(this)}
+                          showModal={this.showModal.bind(this)}
                         />
-                      )
-                    })}
+                      )})}
                     {provided.placeholder}
                   </Container>
                 )}

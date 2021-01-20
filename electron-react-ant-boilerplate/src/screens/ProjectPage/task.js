@@ -3,6 +3,7 @@ import styles from './task.scss'
 import {Draggable} from "react-beautiful-dnd";
 import styled from "styled-components";
 import ContentEditable from 'react-contenteditable'
+import {Button} from "antd";
 
 const Container = styled.div`
     border-radius: 2px;
@@ -47,6 +48,10 @@ export default class Task extends React.Component{
     this.props.updateTaskContent(currentText,this.props.task.id);
     currentText = '';
   }
+  handleOpen = (cardContent) =>
+  {
+    this.props.showModal(cardContent);
+  }
   render(){
     const updateTaskContent = this.props.updateTaskContent;
 
@@ -55,6 +60,7 @@ export default class Task extends React.Component{
       ? 'empty'
       : this.props.task.content
     ;
+
     return (
       <Draggable
         draggableId={this.props.task.id}
@@ -78,7 +84,9 @@ export default class Task extends React.Component{
               onFocus={(evt) => this.handleFocus(evt)}
               onBlur={() => this.handleBlur()}
             />
+            <Button onClick={() => this.handleOpen(taskContent)}></Button>
           </Container>
+
         )}
       </Draggable>
     );

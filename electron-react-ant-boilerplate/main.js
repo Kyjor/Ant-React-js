@@ -22,7 +22,9 @@ function createWindow() {
   mainWindow = new BrowserWindow({
     width: 1024,
     height: 768,
-    show: false
+    show: false,
+    // You need to activate `nativeWindowOpen`
+    webPreferences: { nativeWindowOpen: true },
   });
 
   // and load the index.html of the app.
@@ -67,6 +69,24 @@ function createWindow() {
       });
     }
   });
+
+  mainWindow.webContents.on('new-window',
+    (event, url, frameName, disposition, options, additionalFeatures) =>
+    {
+      // This is the name we chose for our window. You can have multiple names for
+      // multiple windows and each have their options
+      if (frameName === 'NewWindowComponent ') {
+        event.preventDefault();
+        Object.assign(options, {
+          // This will prevent interactions with the mainWindow
+          parent: mainWindow,
+          width: 300,
+          height: 300,
+          // You can also set `left` and `top` positions
+        });
+        event.newGuest = new BrowserWindow(options);
+      }
+    });
 
   // Emitted when the window is closed.
   mainWindow.on("closed", function() {

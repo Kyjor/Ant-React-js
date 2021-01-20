@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+    <title>Document</title>
+</head>
+<body>
+    <h1>
+        <span id="hour">00</span> :
+        <span id="min">00</span> :
+        <span id="sec">00</span> :
+        <span id="milisec">00</span>
+    </h1>
+
+<button onclick="startStop()" id="start">Start</button>
+<button onclick="reset()">Reset</button>
+
+<script>
+    let x;
+let startstop = 0;
+    let currentNodeId;
+    let currentNodeTime;
+    let currentNodeData;
+    const electron = require('electron');
+    const { BrowserWindow } = electron.remote;
+    //const { BrowserWindow } = require('electron');
+    webC = electron.remote.BrowserWindow.getAllWindows()[1].webContents;
+    // const windows = BrowserWindow.getFocusedWindow().getRepresentedFilename();
+    // console.log(windows);
+    //     // write screen size to client config file
+    // BrowserWindow().getFocusedWindow().on('closed', () => {
+    //         console.log('closed');
+    //         ipcRenderer.send('closeTimerWindow', (event,dict));
+    //
+    //     });
+    require('electron').remote.getCurrentWindow().on('close', () => {
+        // window was closed...
+        webC.send('update:Time', dict,currentNodeId);
+
+
+    })
+    
+
+    require('electron').ipcRenderer.on('passNodeToTimer', (event, nodeData) => {
+        //console.log({nodeId, nodeTime});
+        //currentNodeId = nodeId;
+        //currentNodeTime = nodeTime;
+        currentNodeData = nodeData;
+        currentNodeId = currentNodeData.id;
+        currentNodeTime = currentNodeData.time;
+        //h1.innerHTML = projectFile;
+        require('electron').remote.getCurrentWindow().on('close', () => {
+            // window was closed...
+            require('electron').ipcRenderer.send('closeTimerWindow', (event,dict, currentNodeId));
+
+        })
+    })
+
+function startStop() { /* Toggle StartStop */
+
+  startstop = startstop + 1;
+
+  if (startstop === 1) {
+    start();
+    document.getElementById("start").innerHTML = "Stop";
+  } else if (startstop === 2) {
+    document.getElementById("start").innerHTML = "Start";
+    startstop = 0;
+    stop();
+  }
+
+}
+
+
+function start() {
+  x = setInterval(timer, 10);
+} /* Start */
+
+function stop() {
+  clearInterval(x);
+} /* Stop */
+
+var milisec = 0;
+var sec = 0; /* holds incrementing value */
+var min = 0;
+var hour = 0;
+
+/* Contains and outputs returned value of  function checkTime */
+
+var miliSecOut = 0;
+var secOut = 0;
+var minOut = 0;
+var hourOut = 0;
+//var nodeId = currentNode._row.data.id;
+var dict = {
+    nodeId: 0,
+};
+/* Output variable End */
+
+
+function timer() {
+  /* Main Timer */
+  miliSecOut = checkTime(milisec);
+  secOut = checkTime(sec);
+  minOut = checkTime(min);
+  hourOut = checkTime(hour);
+  console.log(currentNodeTime);
+    if(milisec === 0 && sec === 0 && min === 0 && hour === 0 && dict[currentNodeId] !== currentNodeTime)
+    {
+        dict[currentNodeId] = currentNodeTime;
+    }
+  milisec = ++milisec;
+
+  if (milisec === 100) {
+    milisec = 0;
+    sec = ++sec;
+    dict[currentNodeId] = dict[currentNodeId] += 1;
+    //require('electron').ipcRenderer.send('update:Time', dict);
+    require('electron').remote.BrowserWindow.getAllWindows()[1].webContents.send('update:Time', dict,currentNodeId);
+
+      console.log(dict[currentNodeId]);
+  }
+
+  if (sec == 60) {
+    min = ++min;
+    sec = 0;
+  }
+
+  if (min == 60) {
+    min = 0;
+    hour = ++hour;
+
+  }
+
+  document.getElementById("milisec").innerHTML = miliSecOut;
+  document.getElementById("sec").innerHTML = secOut;
+  document.getElementById("min").innerHTML = minOut;
+  document.getElementById("hour").innerHTML = hourOut;
+
+}
+
+
+/* Adds 0 when value is <10 */
+
+
+function checkTime(i) {
+  if (i < 10) {
+    i = "0" + i;
+  }
+  return i;
+}
+
+function reset() {
+
+
+  /*Reset*/
+
+  milisec = 0;
+  sec = 0;
+  min = 0
+  hour = 0;
+
+  document.getElementById("milisec").innerHTML = "00";
+  document.getElementById("sec").innerHTML = "00";
+  document.getElementById("min").innerHTML = "00";
+  document.getElementById("hour").innerHTML = "00";
+
+}
+</script>
+</body>
+</html>

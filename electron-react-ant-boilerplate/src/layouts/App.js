@@ -8,6 +8,7 @@ import styles from "./App.scss";
 import Header from "@/components/@shared/Header";
 import Footer from "@/components/@shared/Footer";
 import LokiService from "../services/LokiService";
+import NewWindowComponent from "../components/NewWindowComponent";
 /**
  * App
  *
@@ -22,7 +23,9 @@ class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      lokiLoaded: false
+      lokiLoaded: false,
+      // To keep track of the new window if opened or closed
+      isNewWindow: false,
     }
   }
 
@@ -34,13 +37,30 @@ class App extends React.Component {
 
   render() {
     const { children } = this.props;
-      return (<Layout>
+      return (
+
+        // onClose will be fired when the new window is closed
+        // everything inside NewWindowComponent is considered props.children and will be
+        // displayed in a new window
+        <>
+        {this.state.isNewWindow &&
+        <NewWindowComponent onClose={() => this.setState({ isNewWindow: false })}>
+            <h2>This will display in a new window</h2>
+          <div>cry cry</div>
+            </NewWindowComponent>
+          }
+        <Layout>
         <Header />
         <Layout className={styles.app}>
           <Layout.Content>{children}</Layout.Content>
         </Layout>
         <Footer />
-      </Layout>)
+      </Layout>
+          <button
+            onClick={() => this.setState({ isNewWindow: true })}>
+            Open in new window</button>
+          </>
+          )
   }
 }
 
