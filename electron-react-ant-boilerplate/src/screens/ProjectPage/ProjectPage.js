@@ -286,6 +286,7 @@ onDragEnd = (result, provided) => {
     },
   };
   console.log('moved')
+  LokiService.updateTasksInColumns(newStart, newFinish);
   this.setState(newState);
 };
 

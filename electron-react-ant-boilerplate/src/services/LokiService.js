@@ -185,13 +185,24 @@ class LokiService {
     let columnIdInt = parseInt(newColumn.id.slice(7,8));
     let column = this.columnNodes.get(columnIdInt);
     console.log(column)
-    column = newColumn;
+    column.taskIds = newColumn.taskIds;
     this.columnNodes.update(column);
     this.db.saveDatabase();
 
   }
   updateTasksInColumns = (newStart, newFinish) => {
     console.log()
+    let startColumnIdInt = parseInt(newStart.id.slice(7,8));
+    let finishColumnIdInt = parseInt(newFinish.id.slice(7,8));
+    let startColumn = this.columnNodes.get(startColumnIdInt);
+    let finishColumn = this.columnNodes.get(finishColumnIdInt);
+    startColumn.taskIds = newStart.taskIds;
+    finishColumn.taskIds = newFinish.taskIds;
+    this.columnNodes.update(startColumn);
+    this.columnNodes.update(finishColumn);
+    this.db.saveDatabase();
+
+
   }
 
   saveDB = () => this.db.saveDatabase();
