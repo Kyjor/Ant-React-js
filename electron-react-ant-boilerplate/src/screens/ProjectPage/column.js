@@ -55,7 +55,7 @@ class InnerList extends React.PureComponent
       const updateTaskContent = this.props.updateTaskContent;
       let showModal = this.props.showModal;
       return this.props.tasks.map((task,index) => (
-         <Task key={task.id} task={task} index={index} updateTaskContent = {(content,id) => updateTaskContent(content, id)} showModal={showModal.bind(this)} >
+         <Task key={task.id} task={task} index={index} updateTaskContent = {updateTaskContent.bind(this)} showModal={showModal.bind(this)} >
          </Task>
       ));
     }
@@ -103,7 +103,7 @@ export default class Column extends React.Component{
                 isDraggingOver={snapshot.isDraggingOver}
               >
                 <InnerList tasks={this.props.tasks}
-                           updateTaskContent={(content,id) => updateTaskContent(content,id)}
+                           updateTaskContent={updateTaskContent.bind(this)}
                            showModal={showModal.bind(this)}
 
                 />

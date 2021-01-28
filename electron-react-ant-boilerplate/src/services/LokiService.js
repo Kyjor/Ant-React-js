@@ -150,7 +150,7 @@ class LokiService {
   createCard = (cardId, cardContent, columnId, newCount) => {
     let cardCount = this.cardCountNode.get(1);
     cardCount.count = newCount;
-    let columnIdInt = parseInt(columnId.slice(7,8));
+    let columnIdInt = parseInt(columnId.slice(7, columnId.length));
     this.cardNodes.insert({id: cardId, content: cardContent});
     let selectedColumn = this.columnNodes.get(columnIdInt);
     selectedColumn.taskIds = [...selectedColumn.taskIds, cardId]
@@ -165,8 +165,9 @@ class LokiService {
   removeComments = commentIds => {
     // delete comments here and return execution status (or throw error)
   };
-  updateCard = ( cardId,cardContent) => {
-    let cardIdInt = parseInt(cardId.slice(5,6));
+  updateCard = (cardContent,cardId) => {
+    let cardIdInt =  parseInt(cardId.slice(5,cardId.length));
+    console.log(cardIdInt)
     // update cards here and return execution status (or throw error)
     let cardObject = this.cardNodes.get(cardIdInt);
     cardObject.content = cardContent;
@@ -192,8 +193,8 @@ class LokiService {
   }
   updateTasksInColumns = (newStart, newFinish) => {
     console.log()
-    let startColumnIdInt = parseInt(newStart.id.slice(7,8));
-    let finishColumnIdInt = parseInt(newFinish.id.slice(7,8));
+    let startColumnIdInt = parseInt(newStart.id.slice(7,newStart.id.length));
+    let finishColumnIdInt = parseInt(newFinish.id.slice(7,newFinish.id.length));
     let startColumn = this.columnNodes.get(startColumnIdInt);
     let finishColumn = this.columnNodes.get(finishColumnIdInt);
     startColumn.taskIds = newStart.taskIds;

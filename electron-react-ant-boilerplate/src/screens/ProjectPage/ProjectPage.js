@@ -175,6 +175,7 @@ class ProjectPage extends Component {
   }
   updateTaskContent(newContent, cardId)
   {
+    console.log(cardId)
     LokiService.updateCard(newContent,cardId);
     const prevTasks = this.state.tasks;
     const newTaskList = {
