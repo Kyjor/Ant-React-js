@@ -52,10 +52,12 @@ class InnerList extends React.PureComponent
 
     render()
     {
-      const updateTaskContent = this.props.updateTaskContent;
-      let showModal = this.props.showModal;
-      return this.props.tasks.map((task,index) => (
-         <Task key={task.id} task={task} index={index} updateTaskContent = {(content,id) => updateTaskContent(content, id)} showModal={showModal.bind(this)} >
+      //const updateTaskContent = this.props.updateTaskContent;
+     // let showModal = this.props.showModal
+      const { tasks = [],...rest }= this.props;
+
+      return tasks.map((task,index) => (
+         <Task key={task.id} task={task} index={index} {...rest} >
          </Task>
       ));
     }
@@ -104,7 +106,7 @@ export default class Column extends React.Component{
               >
                 <InnerList tasks={this.props.tasks}
                            updateTaskContent={(content,id) => updateTaskContent(content,id)}
-                           showModal={showModal.bind(this)}
+                           showModal={showModal}
 
                 />
                 {provided.placeholder}

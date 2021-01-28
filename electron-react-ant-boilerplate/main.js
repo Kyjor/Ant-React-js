@@ -1,7 +1,7 @@
 "use strict";
 
 // Import parts of electron to use
-const { app, BrowserWindow, Menu } = require("electron");
+const { app, BrowserWindow, Menu, ipcMain } = require("electron");
 const path = require("path");
 const url = require("url");
 const isDev = require("electron-is-dev");
@@ -96,6 +96,10 @@ function createWindow() {
     mainWindow = null;
   });
 }
+ipcMain.on('test', (event, arg) => {
+  console.log('here 001', arg)
+  mainWindow.send('test1', arg)
+})
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
@@ -118,3 +122,35 @@ app.on("activate", () => {
     createWindow();
   }
 });
+
+ipcMain.on('project:window',
+  () =>{
+    console.log('addinga i');
+    createAddWindow
+  }
+);
+ipcMain.on('MSG_FROM_RENDERER', (event, data) => console.log(data));
+
+function createAddWindow() {
+  console.log('making it')
+  let addWindow = new BrowserWindow({
+    width: 300,
+    height: 200,
+    title: 'Add Shopping List Item',
+    webPreferences: {
+      nodeIntegration: true
+      , enableRemoteModule: true
+    }
+  });
+
+  addWindow.loadURL(url.format({
+    pathname: path.join(__dirname, 'timerWindow'),
+    protocol: 'file:',
+    slashes: true
+  }));
+
+
+  addWindow.on('close', function () {
+    addWindow = null;
+  });
+}

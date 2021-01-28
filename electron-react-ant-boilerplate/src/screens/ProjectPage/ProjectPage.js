@@ -13,7 +13,10 @@ let myModule = require('./initial-data').init('test'); //Prints 'test'
 import Column from "./column";
 import Task from "./task";
 import { Modal, Button } from 'antd';
-
+const electron = window.require('electron')
+const ipcRenderer = electron.ipcRenderer;
+const fs = electron.fs;
+//if you use fs
 
 const Container = styled.div`
   display: flex;
@@ -44,6 +47,8 @@ class ProjectPage extends Component {
     this.updateTaskContent = this.updateTaskContent.bind(this);
     this.testCallback = this.testCallback.bind(this);
     this.showModal = this.showModal.bind(this);
+
+    this.createAddWindow = this.createAddWindow.bind(this);
 
     this.state = {
       lokiLoaded: false
@@ -136,7 +141,16 @@ class ProjectPage extends Component {
     this.setState(newState);
   }
 
+  createAddWindow()
+  {
+    console.log(ipcRenderer)
+    ipcRenderer.send('project:window');
+    console.log('created add window')
+  }
+
   componentDidMount() {
+    ipcRenderer.send('MSG_FROM_RENDERER', 'hello main');
+    //this.createAddWindow();
     LokiService.init(() => {
       this.testCallback();
       this.setState({ lokiLoaded: true })
@@ -321,7 +335,11 @@ onDragEnd = (result, provided) => {
           <Layout>
             <Path />
             <div>
-            <Button type="primary" onClick={this.showModal}>
+            <Button type="primary" onClick={() => {
+              this.showModal()
+              ipcRenderer.send('MSG_FROM_RENDERER', 'hello main');
+
+            }}>
               Open Modal
             </Button>
             <Modal

@@ -165,8 +165,10 @@ class LokiService {
   removeComments = commentIds => {
     // delete comments here and return execution status (or throw error)
   };
-  updateCard = ( cardId,cardContent) => {
+  updateCard = (cardContent, cardId) => {
+
     let cardIdInt = parseInt(cardId.slice(5,6));
+    console.log(cardIdInt)
     // update cards here and return execution status (or throw error)
     let cardObject = this.cardNodes.get(cardIdInt);
     cardObject.content = cardContent;

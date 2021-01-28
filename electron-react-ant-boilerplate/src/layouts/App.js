@@ -9,6 +9,9 @@ import Header from "@/components/@shared/Header";
 import Footer from "@/components/@shared/Footer";
 import LokiService from "../services/LokiService";
 import NewWindowComponent from "../components/NewWindowComponent";
+const electron = window.require('electron')
+const ipcRenderer = electron.ipcRenderer;
+const fs = electron.fs;
 /**
  * App
  *
@@ -27,14 +30,23 @@ class App extends React.Component {
       // To keep track of the new window if opened or closed
       isNewWindow: false,
     }
+    this.handleOnClick = this.handleOnClick.bind(this);
+    this.handleMessage = this.handleMessage.bind(this);
   }
 
   componentDidMount() {
     LokiService.init(() => {
       this.setState({ lokiLoaded: true })
     });
+    ipcRenderer.on('test1', this.handleMessage)
   }
-
+  handleOnClick(){
+    //console.log('onclick')
+    ipcRenderer.send('test', 'helfdsgfslo')
+  }
+  handleMessage(event, data){
+    console.log('message', data)
+  }
   render() {
     const { children } = this.props;
       return (
@@ -47,6 +59,7 @@ class App extends React.Component {
         <NewWindowComponent onClose={() => this.setState({ isNewWindow: false })}>
             <h2>This will display in a new window</h2>
           <div>cry cry</div>
+          {console.log('helooo')}
             </NewWindowComponent>
           }
         <Layout>
@@ -57,7 +70,8 @@ class App extends React.Component {
         <Footer />
       </Layout>
           <button
-            onClick={() => this.setState({ isNewWindow: true })}>
+           // onClick={() => this.setState({ isNewWindow: true })}
+            onClick={this.handleOnClick}>
             Open in new window</button>
           </>
           )
