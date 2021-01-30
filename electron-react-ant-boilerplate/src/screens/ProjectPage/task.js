@@ -52,6 +52,10 @@ export default class Task extends React.Component{
   {
     this.props.showModal(cardContent);
   }
+  handleDelete = (cardId, columnId) =>
+  {
+    this.props.deleteCard(cardId, columnId);
+  }
   render(){
     const updateTaskContent = this.props.updateTaskContent;
 
@@ -85,6 +89,7 @@ export default class Task extends React.Component{
               onBlur={() => this.handleBlur()}
             />
             <Button onClick={() => this.handleOpen(taskContent)}></Button>
+            <Button onClick={() => this.handleDelete(this.props.task.id, this.props.task.parent)}></Button>
           </Container>
 
         )}

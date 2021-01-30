@@ -151,7 +151,7 @@ class LokiService {
     let cardCount = this.cardCountNode.get(1);
     cardCount.count = newCount;
     let columnIdInt = parseInt(columnId.slice(7, columnId.length));
-    this.cardNodes.insert({id: cardId, content: cardContent});
+    this.cardNodes.insert({id: cardId, content: cardContent, parent: columnId});
     let selectedColumn = this.columnNodes.get(columnIdInt);
     selectedColumn.taskIds = [...selectedColumn.taskIds, cardId]
 

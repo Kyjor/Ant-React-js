@@ -47,6 +47,7 @@ class ProjectPage extends Component {
     this.updateTaskContent = this.updateTaskContent.bind(this);
     this.testCallback = this.testCallback.bind(this);
     this.showModal = this.showModal.bind(this);
+    this.deleteCard = this.deleteCard.bind(this);
 
     this.createAddWindow = this.createAddWindow.bind(this);
 
@@ -159,29 +160,29 @@ class ProjectPage extends Component {
 
   createNewCard(columnId)
   {
-    const prevTasks = this.state.tasks;
+    const prevCards = this.state.tasks;
     const newCount = this.state.count + 1;
     const newId = `task-${newCount}`;
     const newContent = `Take out the trash${newCount}`
     LokiService.createCard(newId, newContent, columnId, newCount);
-    const prevTaskIds = this.state.columns[columnId].taskIds;
-    const newTaskIds = [...prevTaskIds, newId]
-    const newTaskList = {
-      ...prevTasks,
-      [newId]: {id: newId, content: newContent},
+    const prevCardIds = this.state.columns[columnId].taskIds;
+    const newCardIds = [...prevCardIds, newId]
+    const newCardList = {
+      ...prevCards,
+      [newId]: {id: newId, content: newContent, parent: columnId},
     }
     let newColumns = this.state.columns;
     newColumns = {
       ...newColumns,
       [columnId]: {
         ...newColumns[columnId],
-        taskIds: newTaskIds,
+        taskIds: newCardIds,
       }
     }
 
     const newState = {
       ...this.state,
-      tasks: newTaskList,
+      tasks: newCardList,
       columns: newColumns,
       count: newCount,
     };
@@ -311,6 +312,33 @@ onDragEnd = (result, provided) => {
       visible: true,
       modalContent: cardContent,
     });
+  };
+  deleteCard = (cardId, columnId) => {
+    const prevCards = this.state.tasks;
+    const newCount = this.state.count - 1;
+    LokiService.deleteCard(cardId);
+    const prevCardIds = this.state.columns[columnId].taskIds;
+    const newCardIds = prevCardIds.splice(prevCardIds.indexOf(cardId),1);
+    const newCardList = {
+      ...prevCards,
+      [newId]: {id: newId, content: newContent},
+    }
+    let newColumns = this.state.columns;
+    newColumns = {
+      ...newColumns,
+      [columnId]: {
+        ...newColumns[columnId],
+        taskIds: newCardIds,
+      }
+    }
+
+    const newState = {
+      ...this.state,
+      tasks: newCardList,
+      columns: newColumns,
+      count: newCount,
+    };
+    this.setState(newState);
   };
 
   handleOk = e => {
