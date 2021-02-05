@@ -11,7 +11,7 @@ import {DragDropContext, Droppable} from "react-beautiful-dnd";
 import LokiService from "../../services/LokiService"; // or wherever the above file is stored
 let myModule = require('./initial-data').init('test'); //Prints 'test'
 import Column from "./column";
-import Task from "./task";
+import Card from "./card";
 import { Modal, Button } from 'antd';
 const electron = window.require('electron')
 const ipcRenderer = electron.ipcRenderer;
@@ -25,12 +25,12 @@ class InnerList extends React.PureComponent
 {
   render()
   {
-    const { column, taskMap, index} = this.props;
-    const tasks = column.taskIds.map(taskId => taskMap[taskId]);
+    const { column, cardMap, index} = this.props;
+    const cards = column.cardIds.map(cardId => cardMap[cardId]);
     let createNewCard = this.props.createNewCard;
     let showModal = this.props.showModal;
-    let updateTaskContent = this.props.updateTaskContent;
-    return <Column column={column} tasks={tasks} index={index} createNewCard = {createNewCard.bind(this)}showModal={showModal.bind(this)} updateTaskContent={updateTaskContent.bind(this)}/>
+    let updateCardContent = this.props.updateCardContent;
+    return <Column column={column} cards={cards} index={index} createNewCard = {createNewCard.bind(this)}showModal={showModal.bind(this)} updateCardContent={updateCardContent.bind(this)}/>
   }
 }
 /**
@@ -44,7 +44,7 @@ class ProjectPage extends Component {
     super(props);
     this.onDragEnd = this.onDragEnd.bind(this);
     this.createNewCard = this.createNewCard.bind(this);
-    this.updateTaskContent = this.updateTaskContent.bind(this);
+    this.updateCardContent = this.updateCardContent.bind(this);
     this.testCallback = this.testCallback.bind(this);
     this.showModal = this.showModal.bind(this);
     this.deleteCard = this.deleteCard.bind(this);
@@ -116,14 +116,14 @@ class ProjectPage extends Component {
     columnList.forEach(thisColumn => {
       allColumns = {
         ...allColumns,
-        [thisColumn.id]:{id:thisColumn.id, title:thisColumn.title, taskIds: thisColumn.taskIds}
+        [thisColumn.id]:{id:thisColumn.id, title:thisColumn.title, cardIds: thisColumn.cardIds}
       }
     })
 
     cardData = {
         count: cardCountNode.get(1).count,
-        newTask: cardTemplateNodes.get(1).content,
-        tasks:cards,
+        newCard: cardTemplateNodes.get(1).content,
+        cards:cards,
       }
        columnData =
         {
@@ -134,8 +134,8 @@ class ProjectPage extends Component {
     const newState = {
       ...this.state,
       count: cardData.count,
-      newTask: cardData.newTask,
-      tasks: cardData.tasks,
+      newCard: cardData.newCard,
+      cards: cardData.cards,
       columns: columnData.columns,
       columnOrder: columnData.columnOrder,
     };
@@ -160,12 +160,12 @@ class ProjectPage extends Component {
 
   createNewCard(columnId)
   {
-    const prevCards = this.state.tasks;
+    const prevCards = this.state.cards;
     const newCount = this.state.count + 1;
-    const newId = `task-${newCount}`;
+    const newId = `card-${newCount}`;
     const newContent = `Take out the trash${newCount}`
     LokiService.createCard(newId, newContent, columnId, newCount);
-    const prevCardIds = this.state.columns[columnId].taskIds;
+    const prevCardIds = this.state.columns[columnId].cardIds;
     const newCardIds = [...prevCardIds, newId]
     const newCardList = {
       ...prevCards,
@@ -176,37 +176,37 @@ class ProjectPage extends Component {
       ...newColumns,
       [columnId]: {
         ...newColumns[columnId],
-        taskIds: newCardIds,
+        cardIds: newCardIds,
       }
     }
 
     const newState = {
       ...this.state,
-      tasks: newCardList,
+      cards: newCardList,
       columns: newColumns,
       count: newCount,
     };
     this.setState(newState);
   }
-  updateTaskContent(newContent, cardId)
+  updateCardContent(newContent, cardId)
   {
     console.log(cardId)
     LokiService.updateCard(newContent,cardId);
-    const prevTasks = this.state.tasks;
-    const newTaskList = {
-      ...prevTasks,
+    const prevCards = this.state.cards;
+    const newCardList = {
+      ...prevCards,
       [cardId]: {id: cardId, content: newContent},
     }
 
     const newState = {
       ...this.state,
-      tasks: newTaskList,
+      cards: newCardList,
     };
     this.setState(newState);
   }
 
   onDragStart = (start, provided) => {
-    provided.announce(`You have lifted the task in the position ${start.source.index + 1}`);
+    provided.announce(`You have lifted the card in the position ${start.source.index + 1}`);
     const homeIndex = this.state.columnOrder.indexOf(start.source.droppableId);
     document.body.style.transition = 'background-color 0.2s ease';
     this.setState({
@@ -215,19 +215,19 @@ class ProjectPage extends Component {
   };
   onDragUpdate = (update, provided) => {
     const message = update.destination
-    ? `You have moved the task to position ${update.destination.index + 1}`
+    ? `You have moved the card to position ${update.destination.index + 1}`
       : `You are currently not over a droppable area`;
     provided.announce(message);
     const { destination } = update;
     const opacity = destination
-    ? destination.index / Object.keys(this.state.tasks).length
+    ? destination.index / Object.keys(this.state.cards).length
       : 0;
     document.body.style.backgroundColor = `rgba(153, 141, 217, ${opacity})`;
   }
 onDragEnd = (result, provided) => {
   const message = result.destination
-    ? `You have moved the task from position ${result.source.index + 1} to ${result.destination.index + 1}`
-    : `The task has been returned to its starting position of  ${result.source.index + 1}`;
+    ? `You have moved the card from position ${result.source.index + 1} to ${result.destination.index + 1}`
+    : `The card has been returned to its starting position of  ${result.source.index + 1}`;
   provided.announce(message);
   const { destination, source, draggableId, type } =result;
 
@@ -260,12 +260,12 @@ onDragEnd = (result, provided) => {
   const finish = this.state.columns[destination.droppableId]
 
   if (start === finish) {
-    const newTaskIds = Array.from(start.taskIds);
-    newTaskIds.splice(source.index, 1);
-    newTaskIds.splice(destination.index, 0, draggableId);
+    const newCardIds = Array.from(start.cardIds);
+    newCardIds.splice(source.index, 1);
+    newCardIds.splice(destination.index, 0, draggableId);
     const newColumn = {
       ...start,
-      taskIds: newTaskIds,
+      cardIds: newCardIds,
     };
 
     const newState = {
@@ -275,24 +275,24 @@ onDragEnd = (result, provided) => {
         [newColumn.id]: newColumn,
       },
     };
-    console.log('changed task id order')
-    LokiService.updateColumnTaskIdOrder(newColumn)
+    console.log('changed card id order')
+    LokiService.updateColumnCardIdOrder(newColumn)
     this.setState(newState);
     return;
   }
 
-  const startTaskIds = Array.from(start.taskIds);
-  startTaskIds.splice(source.index, 1);
+  const startCardIds = Array.from(start.cardIds);
+  startCardIds.splice(source.index, 1);
   const  newStart = {
     ...start,
-    taskIds: startTaskIds,
+    cardIds: startCardIds,
   };
 
-  const finishTaskIds = Array.from(finish.taskIds);
-  finishTaskIds.splice(destination.index, 0, draggableId);
+  const finishCardIds = Array.from(finish.cardIds);
+  finishCardIds.splice(destination.index, 0, draggableId);
   const newFinish = {
     ...finish,
-    taskIds: finishTaskIds,
+    cardIds: finishCardIds,
   };
   const newState= {
     ...this.state,
@@ -303,7 +303,7 @@ onDragEnd = (result, provided) => {
     },
   };
   console.log('moved')
-  LokiService.updateTasksInColumns(newStart, newFinish);
+  LokiService.updateCardsInColumns(newStart, newFinish);
   this.setState(newState);
 };
   showModal = (cardContent) => {
@@ -314,10 +314,10 @@ onDragEnd = (result, provided) => {
     });
   };
   deleteCard = (cardId, columnId) => {
-    const prevCards = this.state.tasks;
+    const prevCards = this.state.cards;
     const newCount = this.state.count - 1;
     LokiService.deleteCard(cardId);
-    const prevCardIds = this.state.columns[columnId].taskIds;
+    const prevCardIds = this.state.columns[columnId].cardIds;
     const newCardIds = prevCardIds.splice(prevCardIds.indexOf(cardId),1);
     const newCardList = {
       ...prevCards,
@@ -328,13 +328,13 @@ onDragEnd = (result, provided) => {
       ...newColumns,
       [columnId]: {
         ...newColumns[columnId],
-        taskIds: newCardIds,
+        cardIds: newCardIds,
       }
     }
 
     const newState = {
       ...this.state,
-      tasks: newCardList,
+      cards: newCardList,
       columns: newColumns,
       count: newCount,
     };
@@ -402,10 +402,10 @@ onDragEnd = (result, provided) => {
                         <InnerList
                           key={column.id}
                           column={column}
-                          taskMap={this.state.tasks}
+                          cardMap={this.state.cards}
                           index={index}
                           createNewCard = {this.createNewCard.bind(this)}
-                          updateTaskContent = {this.updateTaskContent.bind(this)}
+                          updateCardContent = {this.updateCardContent.bind(this)}
                           showModal={this.showModal.bind(this)}
                         />
                       )})}

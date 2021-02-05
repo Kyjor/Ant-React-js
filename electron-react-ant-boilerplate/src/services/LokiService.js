@@ -150,7 +150,7 @@ class LokiService {
   createCard = (cardId, cardContent, columnId, newCount) => {
     let cardCount = this.cardCountNode.get(1);
     cardCount.count = newCount;
-    let columnIdInt = parseInt(columnId.slice(7, columnId.length));
+    let columnIdInt = parseInt(columnId.slice(7, columnId.lengthn));
     this.cardNodes.insert({id: cardId, content: cardContent, parent: columnId});
     let selectedColumn = this.columnNodes.get(columnIdInt);
     selectedColumn.taskIds = [...selectedColumn.taskIds, cardId]
@@ -181,7 +181,7 @@ class LokiService {
     this.columnOrderNode.update(order);
     this.db.saveDatabase();
   }
-  updateColumnTaskIdOrder = (newColumn) => {
+  updateColumnCardIdOrder = (newColumn) => {
 
     let columnIdInt = parseInt(newColumn.id.slice(7,8));
     let column = this.columnNodes.get(columnIdInt);
@@ -191,14 +191,14 @@ class LokiService {
     this.db.saveDatabase();
 
   }
-  updateTasksInColumns = (newStart, newFinish) => {
+  updateCardsInColumns = (newStart, newFinish) => {
     console.log()
     let startColumnIdInt = parseInt(newStart.id.slice(7,newStart.id.length));
     let finishColumnIdInt = parseInt(newFinish.id.slice(7,newFinish.id.length));
     let startColumn = this.columnNodes.get(startColumnIdInt);
     let finishColumn = this.columnNodes.get(finishColumnIdInt);
-    startColumn.taskIds = newStart.taskIds;
-    finishColumn.taskIds = newFinish.taskIds;
+    startColumn.cardIds = newStart.cardIds;
+    finishColumn.cardIds = newFinish.cardIds;
     this.columnNodes.update(startColumn);
     this.columnNodes.update(finishColumn);
     this.db.saveDatabase();

@@ -1,6 +1,6 @@
 import React from 'react';
 import styles from './column.scss'
-import Task from './task';
+import Card from './card';
 import { Droppable, Draggable } from "react-beautiful-dnd";
 import styled from 'styled-components';
 
@@ -29,7 +29,7 @@ const AddButton = styled.button`
   margin-right: 5px;
 
 `;
-const TaskList = styled.div`
+const CardList = styled.div`
   padding: 8px;
   background-color: ${props => props.isDraggingOver ? 'skyblue' : 'inherit'};
   flex-grow: 1;
@@ -52,13 +52,13 @@ class InnerList extends React.PureComponent
 
     render()
     {
-      //const updateTaskContent = this.props.updateTaskContent;
+      //const updateCardContent = this.props.updateCardContent;
      // let showModal = this.props.showModal
       const { tasks = [],...rest }= this.props;
 
       return tasks.map((task,index) => (
-         <Task key={task.id} task={task} index={index} {...rest} >
-         </Task>
+         <Card key={task.id} task={task} index={index} {...rest} >
+         </Card>
       ));
     }
 
@@ -66,16 +66,16 @@ class InnerList extends React.PureComponent
 export default class Column extends React.Component{
   constructor(props) {
     super(props)
-    this.addTask = this.addTask.bind(this)
+    this.addCard = this.addCard.bind(this)
   }
-  addTask()
+  addCard()
   {
 
 
   }
   render() {
     let createNewCard = this.props.createNewCard;
-    let updateTaskContent = this.props.updateTaskContent;
+    let updateCardContent = this.props.updateCardContent;
     let showModal = this.props.showModal;
     return (
       <Draggable draggableId={this.props.column.id} index={this.props.index}>
@@ -93,24 +93,24 @@ export default class Column extends React.Component{
         <Droppable
           droppableId={this.props.column.id}
           //type={this.props.column.id === 'column-3' ? 'done' : 'active'}
-          type="task"
+          type="card"
           //isDropDisabled={ this.props.isDropDisabled }
         >
 
           {(provided, snapshot) => (
             <div>
-              <TaskList
+              <CardList
                 ref={provided.innerRef}
                 {...provided.droppableProps}
                 isDraggingOver={snapshot.isDraggingOver}
               >
-                <InnerList tasks={this.props.tasks}
-                           updateTaskContent={(content,id) => updateTaskContent(content,id)}
+                <InnerList cards={this.props.cards}
+                           updateCardContent={(content,id) => updateCardContent(content,id)}
                            showModal={showModal}
 
                 />
                 {provided.placeholder}
-              </TaskList>
+              </CardList>
             </div>
 
           )}

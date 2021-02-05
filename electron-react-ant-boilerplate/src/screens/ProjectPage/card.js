@@ -1,5 +1,5 @@
 import React from 'react';
-import styles from './task.scss'
+import styles from './card.scss'
 import {Draggable} from "react-beautiful-dnd";
 import styled from "styled-components";
 import ContentEditable from 'react-contenteditable'
@@ -29,7 +29,7 @@ const EditButton = styled.button`
 `;
 let currentText = '';
 let currentCardId = null;
-export default class Task extends React.Component{
+export default class Card  extends React.Component{
   constructor(props) {
     super(props);
    // this.handleBlur = this.handleBlur.bind(this);
@@ -41,11 +41,11 @@ export default class Task extends React.Component{
   handleTextChange = (evt, props) => {
     //this.setState({ content: evt.target.value });
     currentText = evt.target.value;
-    currentCardId = props.task.id;
-   // props.updateTaskContent(evt.target.value, props.task.id);
+    currentCardId = props.card.id;
+   // props.updateCardContent(evt.target.value, props.card.id);
   };
   handleBlur = () => {
-    this.props.updateTaskContent(currentText,this.props.task.id);
+    this.props.updateCardContent(currentText,this.props.card.id);
     currentText = '';
   }
   handleOpen = (cardContent) =>
@@ -57,17 +57,17 @@ export default class Task extends React.Component{
     this.props.deleteCard(cardId, columnId);
   }
   render(){
-    const updateTaskContent = this.props.updateTaskContent;
+    const updateCardContent = this.props.updateCardContent;
 
-    const isDragDisabled = this.props.task.id === 'task-1';
-    const taskContent = this.props.task.content === ''
+    const isDragDisabled = this.props.card.id === 'card-1';
+    const cardContent = this.props.card.content === ''
       ? 'empty'
-      : this.props.task.content
+      : this.props.card.content
     ;
 
     return (
       <Draggable
-        draggableId={this.props.task.id}
+        draggableId={this.props.card.id}
         index={this.props.index}
         isDragDisabled={isDragDisabled}
       >
@@ -79,17 +79,17 @@ export default class Task extends React.Component{
                ref={provided.innerRef}
                isDragging={snapshot.isDragging}
                isDragDisabled={isDragDisabled}
-               aria-roledescription="Press space bar to lift the task"
+               aria-roledescription="Press space bar to lift the card"
           >
             <Handle {...provided.dragHandleProps} />
             <ContentEditable
-              html={taskContent}
+              html={cardContent}
               onChange={(evt) => this.handleTextChange(evt,this.props)}
               onFocus={(evt) => this.handleFocus(evt)}
               onBlur={() => this.handleBlur()}
             />
-            <Button onClick={() => this.handleOpen(taskContent)}></Button>
-            <Button onClick={() => this.handleDelete(this.props.task.id, this.props.task.parent)}></Button>
+            <Button onClick={() => this.handleOpen(cardContent)}></Button>
+            <Button onClick={() => this.handleDelete(this.props.card.id, this.props.card.parent)}></Button>
           </Container>
 
         )}
