@@ -29,8 +29,9 @@ class InnerList extends React.PureComponent
     const cards = column.cardIds.map(cardId => cardMap[cardId]);
     let createNewCard = this.props.createNewCard;
     let showModal = this.props.showModal;
+    let deleteCard = this.props.deleteCard;
     let updateCardContent = this.props.updateCardContent;
-    return <Column column={column} cards={cards} index={index} createNewCard = {createNewCard.bind(this)}showModal={showModal.bind(this)} updateCardContent={updateCardContent.bind(this)}/>
+    return <Column column={column} cards={cards} index={index} createNewCard = {createNewCard.bind(this)}showModal={showModal.bind(this)} deleteCard={deleteCard.bind(this)}  updateCardContent={updateCardContent.bind(this)}/>
   }
 }
 /**
@@ -306,6 +307,7 @@ onDragEnd = (result, provided) => {
   LokiService.updateCardsInColumns(newStart, newFinish);
   this.setState(newState);
 };
+
   showModal = (cardContent) => {
     console.log(cardContent)
     this.setState({
@@ -314,31 +316,33 @@ onDragEnd = (result, provided) => {
     });
   };
   deleteCard = (cardId, columnId) => {
+    console.log("hello")
+    console.log(columnId)
+
     const prevCards = this.state.cards;
-    const newCount = this.state.count - 1;
-    LokiService.deleteCard(cardId);
-    const prevCardIds = this.state.columns[columnId].cardIds;
-    const newCardIds = prevCardIds.splice(prevCardIds.indexOf(cardId),1);
-    const newCardList = {
-      ...prevCards,
-      [newId]: {id: newId, content: newContent},
-    }
-    let newColumns = this.state.columns;
-    newColumns = {
-      ...newColumns,
-      [columnId]: {
-        ...newColumns[columnId],
-        cardIds: newCardIds,
-      }
+     const newCount = this.state.count - 1;
+     //LokiService.deleteCard(cardId);
+     const prevCardIds = this.state.columns;
+     console.log(prevCardIds)
+     const newCardIds = prevCardIds.splice(prevCardIds.indexOf(cardId),1);
+     const newCardList = prevCards.splice(prevCards.indexOf(cardId),1);
+     let newColumns = this.state.columns;
+     newColumns = {
+       ...newColumns,
+       [columnId]: {
+         ...newColumns[columnId],
+         cardIds: newCardIds,
+       }
     }
 
-    const newState = {
-      ...this.state,
-      cards: newCardList,
-      columns: newColumns,
-      count: newCount,
-    };
-    this.setState(newState);
+     const newState = {
+       ...this.state,
+       cards: newCardList,
+       columns: newColumns,
+       count: newCount,
+     };
+     this.setState(newState);
+
   };
 
   handleOk = e => {
@@ -407,6 +411,7 @@ onDragEnd = (result, provided) => {
                           createNewCard = {this.createNewCard.bind(this)}
                           updateCardContent = {this.updateCardContent.bind(this)}
                           showModal={this.showModal.bind(this)}
+                          deleteCard={this.deleteCard.bind(this)}
                         />
                       )})}
                     {provided.placeholder}

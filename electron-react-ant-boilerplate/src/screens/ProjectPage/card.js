@@ -89,7 +89,7 @@ export default class Card  extends React.Component{
               onBlur={() => this.handleBlur()}
             />
             <Button onClick={() => this.handleOpen(cardContent)}></Button>
-            <Button onClick={() => this.handleDelete(this.props.card.id, this.props.card.parent)}></Button>
+            <Button onClick={() => this.handleDelete(this.props.card.id, this.props.card.parent.id)}></Button>
           </Container>
 
         )}

@@ -22,8 +22,8 @@ class LokiService {
     this.removeComments = this.removeComments.bind(this);
     this.updateCard = this.updateCard.bind(this);
     this.updateColumnOrder = this.updateColumnOrder.bind(this);
-    this.updateColumnTaskIdOrder = this.updateColumnTaskIdOrder.bind(this);
-    this.updateTasksInColumns = this.updateTasksInColumns.bind(this);
+    this.updateColumnCardIdOrder = this.updateColumnCardIdOrder.bind(this);
+    this.updateCardsInColumns = this.updateCardsInColumns.bind(this);
     this.saveDB = this.saveDB.bind(this);
     this.updateCollection = this.updateCollection.bind(this);
   }
@@ -153,7 +153,7 @@ class LokiService {
     let columnIdInt = parseInt(columnId.slice(7, columnId.lengthn));
     this.cardNodes.insert({id: cardId, content: cardContent, parent: columnId});
     let selectedColumn = this.columnNodes.get(columnIdInt);
-    selectedColumn.taskIds = [...selectedColumn.taskIds, cardId]
+    selectedColumn.cardIds = [...selectedColumn.cardIds, cardId]
 
     this.columnNodes.update(selectedColumn);
     this.cardCountNode.update(cardCount);
@@ -186,7 +186,7 @@ class LokiService {
     let columnIdInt = parseInt(newColumn.id.slice(7,8));
     let column = this.columnNodes.get(columnIdInt);
     console.log(column)
-    column.taskIds = newColumn.taskIds;
+    column.cardIds = newColumn.cardIds;
     this.columnNodes.update(column);
     this.db.saveDatabase();
 
