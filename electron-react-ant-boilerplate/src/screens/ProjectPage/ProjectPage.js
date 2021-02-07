@@ -27,6 +27,7 @@ class InnerList extends React.PureComponent
   {
     const { column, cardMap, index} = this.props;
     const cards = column.cardIds.map(cardId => cardMap[cardId]);
+    console.log(column)
     let createNewCard = this.props.createNewCard;
     let showModal = this.props.showModal;
     let deleteCard = this.props.deleteCard;
@@ -110,7 +111,7 @@ class ProjectPage extends Component {
     cardList.forEach(card => {
       cards = {
         ...cards,
-        [card.id]:{id: card.id, content:card.content}
+        [card.id]:{id: card.id, content:card.content, parent:card.parent}
       }
     })
 
@@ -316,16 +317,14 @@ onDragEnd = (result, provided) => {
     });
   };
   deleteCard = (cardId, columnId) => {
-    console.log("hello")
-    console.log(columnId)
-
-    const prevCards = this.state.cards;
      const newCount = this.state.count - 1;
      //LokiService.deleteCard(cardId);
-     const prevCardIds = this.state.columns;
-     console.log(prevCardIds)
-     const newCardIds = prevCardIds.splice(prevCardIds.indexOf(cardId),1);
-     const newCardList = prevCards.splice(prevCards.indexOf(cardId),1);
+     const newCardIds = this.state.columns[columnId].cardIds;
+    newCardIds.splice(newCardIds.indexOf(cardId),1);
+     console.log(newCardIds)
+     let newCardList = this.state.cards;
+      delete newCardList[cardId];
+      console.log(newCardList)
      let newColumns = this.state.columns;
      newColumns = {
        ...newColumns,
@@ -334,6 +333,7 @@ onDragEnd = (result, provided) => {
          cardIds: newCardIds,
        }
     }
+    console.log(newColumns)
 
      const newState = {
        ...this.state,

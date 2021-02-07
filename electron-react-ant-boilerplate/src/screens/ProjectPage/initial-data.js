@@ -2,7 +2,7 @@ let initialData;
 
 exports.newCard = function (id)
 {
-  return {id: `card-${id}`, content: `Take out the trash${id}`}
+  return {id: `card-${id}`, content: `Take out the trash${id}`, parent:`column-${id}`}
 }
 exports.newColumn = function (id)
 {

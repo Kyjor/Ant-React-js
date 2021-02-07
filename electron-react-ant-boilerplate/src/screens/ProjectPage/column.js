@@ -54,11 +54,15 @@ class InnerList extends React.PureComponent
     {
       //const updateCardContent = this.props.updateCardContent;
      // let showModal = this.props.showModal
-      const { cards = [],...rest }= this.props;
-
+      const { cards = {},...rest }= this.props;
+      console.log(cards)
       return cards.map((card,index) => (
-         <Card key={card.id} card={card} index={index} {...rest} >
-         </Card>
+        <>
+          {console.log(index)}
+          <Card key={card.id} card={card} index={index} {...rest} >
+        </Card>
+        </>
+
       ));
     }
 
