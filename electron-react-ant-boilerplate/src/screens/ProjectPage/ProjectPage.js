@@ -318,10 +318,9 @@ onDragEnd = (result, provided) => {
   };
   deleteCard = (cardId, columnId) => {
      const newCount = this.state.count - 1;
-     //LokiService.deleteCard(cardId);
+     LokiService.deleteCard(cardId,columnId,newCount);
      const newCardIds = this.state.columns[columnId].cardIds;
     newCardIds.splice(newCardIds.indexOf(cardId),1);
-     console.log(newCardIds)
      let newCardList = this.state.cards;
       delete newCardList[cardId];
       console.log(newCardList)

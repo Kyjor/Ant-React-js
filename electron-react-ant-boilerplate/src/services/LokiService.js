@@ -19,7 +19,7 @@ class LokiService {
     this.init = this.init.bind(this);
     this.getDb = this.getDb.bind(this);
     this.getComments = this.getComments.bind(this);
-    this.removeComments = this.removeComments.bind(this);
+    this.deleteCard = this.deleteCard.bind(this);
     this.updateCard = this.updateCard.bind(this);
     this.updateColumnOrder = this.updateColumnOrder.bind(this);
     this.updateColumnCardIdOrder = this.updateColumnCardIdOrder.bind(this);
@@ -150,7 +150,7 @@ class LokiService {
   createCard = (cardId, cardContent, columnId, newCount) => {
     let cardCount = this.cardCountNode.get(1);
     cardCount.count = newCount;
-    let columnIdInt = parseInt(columnId.slice(7, columnId.lengthn));
+    let columnIdInt = parseInt(columnId.slice(7, columnId.length));
     this.cardNodes.insert({id: cardId, content: cardContent, parent: columnId});
     let selectedColumn = this.columnNodes.get(columnIdInt);
     selectedColumn.cardIds = [...selectedColumn.cardIds, cardId]
@@ -162,9 +162,32 @@ class LokiService {
   getComments = () => {
     // return cards here (or throw error)
   };
-  removeComments = commentIds => {
-    // delete comments here and return execution status (or throw error)
+  deleteCard = (cardId, columnId, newCount) => {
+    let cardCount = this.cardCountNode.get(1);
+    cardCount.count = newCount;
+    let columnIdInt = parseInt(columnId.slice(7, columnId.length));
+    let selectedColumn = this.columnNodes.get(columnIdInt);
+    let cardIdInt =  parseInt(cardId.slice(5,cardId.length));
+    let cardObject = this.cardNodes.get(cardIdInt);
+    this.cardNodes.remove(cardObject);
+
+    const newCardIds = selectedColumn.cardIds;
+    newCardIds.splice(newCardIds.indexOf(cardId),1);
+
+    selectedColumn = {
+      ...selectedColumn,
+      [columnId]: {
+        ...selectedColumn[columnId],
+        cardIds: newCardIds,
+      }
+    }
+
+
+    this.columnNodes.update(selectedColumn);
+    this.cardCountNode.update(cardCount);
+    this.db.saveDatabase();
   };
+
   updateCard = (cardContent,cardId) => {
     let cardIdInt =  parseInt(cardId.slice(5,cardId.length));
     console.log(cardIdInt)
