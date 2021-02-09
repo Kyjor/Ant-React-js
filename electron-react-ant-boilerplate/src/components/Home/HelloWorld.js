@@ -15,7 +15,7 @@ class HelloWorld extends Component {
   }
 
   render() {
-    return <div className={styles.helloWorld}>Helo Wasfdsaforld!</div>;
+    return <div className={styles.helloWorld}>Helo World!</div>;
   }
 }
 

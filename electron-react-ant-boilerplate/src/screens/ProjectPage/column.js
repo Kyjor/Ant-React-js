@@ -54,11 +54,15 @@ class InnerList extends React.PureComponent
     {
       //const updateCardContent = this.props.updateCardContent;
      // let showModal = this.props.showModal
-      const { tasks = [],...rest }= this.props;
+      const { cards = {},...rest }= this.props;
+      console.log(cards)
+      return cards.map((card,index) => (
+        <>
+          {console.log(index)}
+          <Card key={card.id} card={card} index={index} {...rest} >
+        </Card>
+        </>
 
-      return tasks.map((task,index) => (
-         <Card key={task.id} task={task} index={index} {...rest} >
-         </Card>
       ));
     }
 
@@ -77,6 +81,7 @@ export default class Column extends React.Component{
     let createNewCard = this.props.createNewCard;
     let updateCardContent = this.props.updateCardContent;
     let showModal = this.props.showModal;
+    let deleteCard = this.props.deleteCard;
     return (
       <Draggable draggableId={this.props.column.id} index={this.props.index}>
         {(provided) => (
@@ -107,7 +112,7 @@ export default class Column extends React.Component{
                 <InnerList cards={this.props.cards}
                            updateCardContent={(content,id) => updateCardContent(content,id)}
                            showModal={showModal}
-
+                           deleteCard={deleteCard}
                 />
                 {provided.placeholder}
               </CardList>
