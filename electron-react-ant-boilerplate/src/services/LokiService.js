@@ -169,8 +169,8 @@ class LokiService {
     let selectedColumn = this.columnNodes.get(columnIdInt);
     let cardIdInt =  parseInt(cardId.slice(5,cardId.length));
     let cardObject = this.cardNodes.get(cardIdInt);
-    this.cardNodes.remove(cardObject);
-
+    //this.cardNodes.remove(cardObject);
+    cardObject.isArchived = true;
     const newCardIds = selectedColumn.cardIds;
     newCardIds.splice(newCardIds.indexOf(cardId),1);
 
@@ -182,7 +182,7 @@ class LokiService {
       }
     }
 
-
+    this.cardNodes.update(cardObject);
     this.columnNodes.update(selectedColumn);
     this.cardCountNode.update(cardCount);
     this.db.saveDatabase();

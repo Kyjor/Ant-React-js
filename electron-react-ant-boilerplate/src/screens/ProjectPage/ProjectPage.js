@@ -111,7 +111,7 @@ class ProjectPage extends Component {
     cardList.forEach(card => {
       cards = {
         ...cards,
-        [card.id]:{id: card.id, content:card.content, parent:card.parent}
+        [card.id]:{id: card.id, content:card.content, parent:card.parent, isArchived:false}
       }
     })
 
@@ -317,7 +317,7 @@ onDragEnd = (result, provided) => {
     });
   };
   deleteCard = (cardId, columnId) => {
-     const newCount = this.state.count - 1;
+     const newCount = this.state.count;
      LokiService.deleteCard(cardId,columnId,newCount);
      const newCardIds = this.state.columns[columnId].cardIds;
     newCardIds.splice(newCardIds.indexOf(cardId),1);
