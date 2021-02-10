@@ -379,6 +379,14 @@ onDragEnd = (result, provided) => {
               visible={this.state.visible}
               onOk={this.handleOk}
               onCancel={this.handleCancel}
+              footer={[
+                <Button key="back" onClick={this.handleCancel}>
+                  Return
+                </Button>,
+                <Button key="submit" type="primary"  onClick={this.handleOk}>
+                  Start Working
+                </Button>,
+              ]}
             >
               <p>{this.state.modalContent}</p>
               <p>Some contents...</p>
