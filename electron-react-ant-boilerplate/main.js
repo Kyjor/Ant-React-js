@@ -202,26 +202,27 @@ function createNewWindow() {
     // You need to activate `nativeWindowOpen`
     webPreferences: { nativeWindowOpen: true },
   });
+  timerWindow.setAlwaysOnTop(true, 'screen');
 
   // and load the index.html of the app.
-  let timerPath;
+  let indexPath;
 
   if (isDev && process.argv.indexOf("--noDevServer") === -1) {
-    timerPath = url.format({
+    indexPath = url.format({
       protocol: "http:",
       host: "localhost:3100",
-      pathname: "timer.html",
+      pathname: "index.html",
       slashes: true
     });
   } else {
-    timerPath = url.format({
+    indexPath = url.format({
       protocol: "file:",
-      pathname: path.join(__dirname, "dist", "timer.html"),
+      pathname: path.join(__dirname, "dist", "index.html"),
       slashes: true
     });
   }
 
-  timerWindow.loadURL(timerPath);
+  timerWindow.loadURL(indexPath);
 
   // Don't show until we are ready and loaded
   timerWindow.once("ready-to-show", () => {
@@ -254,7 +255,7 @@ function createNewWindow() {
       if (frameName === 'NewWindowComponent ') {
         event.preventDefault();
         Object.assign(options, {
-          // This will prevent interactions with the mainWindow
+          // This will prevent interactions with the timerWindow
           parent: timerWindow,
           width: 300,
           height: 300,

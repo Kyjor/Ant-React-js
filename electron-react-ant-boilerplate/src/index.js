@@ -11,7 +11,7 @@ import NewApp from "./layouts/NewApp";
 const App = Root;
 const TimerWindow = TimerRoot;
 render(<App />, document.getElementById("app"));
-render(<TimerWindow />, document.getElementById("newapp"));
+render(<TimerWindow />, document.getElementById("new"));
 
 if (module.hot) {
   module.hot.accept("./routes/Root", () => {
@@ -20,6 +20,6 @@ if (module.hot) {
   });
   module.hot.accept("./routes/TimerRoot", () => {
     require("@/routes/TimerRoot");
-    render(<NewApp />, document.getElementById("newapp"));
+    render(<NewApp />, document.getElementById("new"));
   });
 }

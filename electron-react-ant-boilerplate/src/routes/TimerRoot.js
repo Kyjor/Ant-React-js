@@ -4,16 +4,14 @@ import { HashRouter, Switch, Route } from "react-router-dom";
 // Screens
 import Home from "@/screens/Home/Home";
 import Projects from "../screens/Projects/Projects";
-import ProjectPage from "../screens/ProjectPage/ProjectPage";
+import NewProjectPage from "../screens/ProjectPage/NewProjectPage";
 
-const Routes = () => (
+const TimerRoutes = () => (
   <HashRouter>
     <Switch>
-      <Route exact path="/" component={Home} />
-      <Route exact path="/projects" component={Projects}/>
-      <Route exact path="/projectPage" component={ProjectPage}/>
+      <Route exact path="/" component={{NewProjectPage}} />
     </Switch>
   </HashRouter>
 );
 
-export default Routes;
+export default TimerRoutes;
