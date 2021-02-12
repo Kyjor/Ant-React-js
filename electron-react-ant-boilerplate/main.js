@@ -5,6 +5,8 @@ const { app, BrowserWindow, Menu, ipcMain } = require("electron");
 const path = require("path");
 const url = require("url");
 const isDev = require("electron-is-dev");
+import ProjectPage from "./src/screens/ProjectPage/ProjectPage";
+
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -203,7 +205,7 @@ function createNewWindow() {
     webPreferences: { nativeWindowOpen: true },
   });
   timerWindow.setAlwaysOnTop(true, 'screen');
-
+  ti
   // and load the index.html of the app.
   let indexPath;
 

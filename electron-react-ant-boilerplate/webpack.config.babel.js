@@ -155,11 +155,17 @@ const config = {
         reload: false
       }),
       new HtmlWebpackPlugin({
+        template: "public/timer.html",
+        minify: {
+          collapseWhitespace: !isDev
+        }
+      }),
+      new HtmlWebpackPlugin({
         template: "public/index.html",
         minify: {
           collapseWhitespace: !isDev
         }
-      })
+      }),
     ]
   },
   development: {

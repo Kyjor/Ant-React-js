@@ -51,17 +51,9 @@ class App extends React.Component {
     const { children } = this.props;
       return (
 
-        // onClose will be fired when the new window is closed
-        // everything inside NewWindowComponent is considered props.children and will be
-        // displayed in a new window
+
         <>
-        {this.state.isNewWindow &&
-        <NewWindowComponent onClose={() => this.setState({ isNewWindow: false })}>
-            <h2>This will display in a new window</h2>
-          <div>cry cry</div>
-          {console.log('helooo')}
-            </NewWindowComponent>
-          }
+
         <Layout>
         <Header />
         <Layout className={styles.app}>

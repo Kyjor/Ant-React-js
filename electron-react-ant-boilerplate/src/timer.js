@@ -6,11 +6,12 @@ import Root from "@/routes/Root";
 import TimerRoot from "@/routes/TimerRoot";
 // Styles
 import "@/themes/App.global.scss";
+import NewApp from "./layouts/NewApp";
 
 const App = Root;
-const NewApp = TimerRoot;
-//render(<App />, document.getElementById("app"));
-render(<NewApp />, document.getElementById("new"));
+const TimerWindow = TimerRoot;
+render(<App />, document.getElementById("app"));
+render(<TimerWindow />, document.getElementById("new"));
 
 if (module.hot) {
   // module.hot.accept("./routes/Root", () => {
@@ -22,4 +23,3 @@ if (module.hot) {
     render(<NewApp />, document.getElementById("new"));
   });
 }
-s

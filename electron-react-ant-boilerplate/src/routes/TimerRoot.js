@@ -9,7 +9,7 @@ import NewProjectPage from "../screens/ProjectPage/NewProjectPage";
 const TimerRoutes = () => (
   <HashRouter>
     <Switch>
-      <Route exact path="/" component={{NewProjectPage}} />
+      <Route exact path="/" component={Home} />
     </Switch>
   </HashRouter>
 );
