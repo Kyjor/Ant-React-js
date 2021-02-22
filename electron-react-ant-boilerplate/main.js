@@ -17,6 +17,32 @@ if (process.platform === "win32") {
   app.commandLine.appendSwitch("high-dpi-support", "true");
   app.commandLine.appendSwitch("force-device-scale-factor", "1");
 }
+const pathCreator = (route) => {
+  let indexPath;
+
+  if(isDev && process.argv.indexOf("--noDevServer") === -1)
+  {
+  indexPath = url.format({
+    protocol: "http:",
+    host: `localhost:3100${"?" + route}`,
+    slashes: true
+  });
+} else {
+  indexPath = url.format({
+    protocol: "file:",
+    pathname: path.join(
+      process.platform === "darwin"
+      ? __dirname.split("/").slice(0, -2).join("/")
+      : __dirname.split("\\").slice(0, -2).join("/"),
+      "dist",
+      "index.html"
+      ),
+    slashes: false
+  }) + `${route}`;
+  console.log(indexPath);
+}
+return indexPath;
+}
 
 function createWindow() {
   // Create the browser window.
@@ -45,8 +71,7 @@ function createWindow() {
       slashes: true
     });
   }
-
-  mainWindow.loadURL(indexPath);
+  mainWindow.loadURL(pathCreator('timer'));
 
   // Don't show until we are ready and loaded
   mainWindow.once("ready-to-show", () => {
