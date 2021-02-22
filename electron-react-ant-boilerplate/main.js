@@ -5,7 +5,6 @@ const { app, BrowserWindow, Menu, ipcMain } = require("electron");
 const path = require("path");
 const url = require("url");
 const isDev = require("electron-is-dev");
-import ProjectPage from "./src/screens/ProjectPage/ProjectPage";
 
 
 // Keep a global reference of the window object, if you don't, the window will
