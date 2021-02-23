@@ -2,14 +2,14 @@
 import React from "react";
 import { HashRouter, Switch, Route } from "react-router-dom";
 // Screens
-import Home from "@/screens/Home/Home";
+import Timer from "@/screens/Timer/Timer";
 import Projects from "../screens/Projects/Projects";
 import NewProjectPage from "../screens/ProjectPage/NewProjectPage";
 
 const TimerRoutes = () => (
   <HashRouter>
     <Switch>
-      <Route exact path="/" component={Home} />
+      <Route exact path="/" component={Timer} />
     </Switch>
   </HashRouter>
 );

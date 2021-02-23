@@ -53,25 +53,7 @@ function createWindow() {
     // You need to activate `nativeWindowOpen`
     webPreferences: { nativeWindowOpen: true },
   });
-
-  // and load the index.html of the app.
-  let indexPath;
-
-  if (isDev && process.argv.indexOf("--noDevServer") === -1) {
-    indexPath = url.format({
-      protocol: "http:",
-      host: "localhost:3100",
-      pathname: "index.html",
-      slashes: true
-    });
-  } else {
-    indexPath = url.format({
-      protocol: "file:",
-      pathname: path.join(__dirname, "dist", "index.html"),
-      slashes: true
-    });
-  }
-  mainWindow.loadURL(pathCreator('timer'));
+  mainWindow.loadURL(pathCreator('app'));
 
   // Don't show until we are ready and loaded
   mainWindow.once("ready-to-show", () => {
@@ -159,67 +141,13 @@ ipcMain.on('project:window',
 ipcMain.on('MSG_FROM_RENDERER', (event,card) => {
     console.log('item text');
     console.log(card);
-    createNewWindow();
+    createTimerWindow();
   }
 );
 
-function createAddWindow() {
-  console.log('making it')
-  let addWindow = new BrowserWindow({
-    width: 300,
-    height: 200,
-    title: 'Add Shopping List Item',
-    webPreferences: {
-      nodeIntegration: true
-      , enableRemoteModule: true
-    }
-  });
+let timerWindow
 
-
-
-  addWindow.loadURL(url.format({
-    pathname: path.join(__dirname, 'timerWindow'),
-    protocol: 'file:',
-    slashes: true
-  }));
-
-
-  addWindow.on('close', function () {
-    addWindow = null;
-  });
-}
-
-function createTimerWindow(card)
-{
-  console.log(__dirname);
- let timerWindow = new BrowserWindow({
-    width: 400,
-    height: 250,
-    title: 'NewTimerWindow',
-    resizable: false,
-    alwaysOnTop: true,
-    webPreferences: {
-      nodeIntegration: true
-      , enableRemoteModule: true
-    }
-  });
-
-  timerWindow.loadURL(url.format({
-    pathname: path.join(__dirname, '/src/screens/ProjectPage/ProjectPage.js'),
-    protocol:'file:',
-    slashes: true
-  }));
-  timerWindow.webContents.on('did-finish-load', () => {
-    timerWindow.webContents.send('passNodeToTimer', card)
-  })
-  timerWindow.on('close', function(){
-    // timerWindow.webContents.send('passNodeDataBack', nodeDict)
-    timerWindow = null;
-  });
-
-}
-let timerWindow;
-function createNewWindow() {
+function createTimerWindow() {
   // Create the browser window.
   timerWindow = new BrowserWindow({
     width: 1024,
@@ -228,27 +156,7 @@ function createNewWindow() {
     // You need to activate `nativeWindowOpen`
     webPreferences: { nativeWindowOpen: true },
   });
-  timerWindow.setAlwaysOnTop(true, 'screen');
-  ti
-  // and load the index.html of the app.
-  let indexPath;
-
-  if (isDev && process.argv.indexOf("--noDevServer") === -1) {
-    indexPath = url.format({
-      protocol: "http:",
-      host: "localhost:3100",
-      pathname: "index.html",
-      slashes: true
-    });
-  } else {
-    indexPath = url.format({
-      protocol: "file:",
-      pathname: path.join(__dirname, "dist", "index.html"),
-      slashes: true
-    });
-  }
-
-  timerWindow.loadURL(indexPath);
+  timerWindow.loadURL(pathCreator('timer'));
 
   // Don't show until we are ready and loaded
   timerWindow.once("ready-to-show", () => {
@@ -299,3 +207,4 @@ function createNewWindow() {
     timerWindow = null;
   });
 }
+
