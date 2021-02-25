@@ -78,24 +78,6 @@ function createWindow() {
     }
   });
 
-  mainWindow.webContents.on('new-window',
-    (event, url, frameName, disposition, options, additionalFeatures) =>
-    {
-      // This is the name we chose for our window. You can have multiple names for
-      // multiple windows and each have their options
-      if (frameName === 'NewWindowComponent ') {
-        event.preventDefault();
-        Object.assign(options, {
-          // This will prevent interactions with the mainWindow
-          parent: mainWindow,
-          width: 300,
-          height: 300,
-          // You can also set `left` and `top` positions
-        });
-        event.newGuest = new BrowserWindow(options);
-      }
-    });
-
   // Emitted when the window is closed.
   mainWindow.on("closed", function() {
     // Dereference the window object, usually you would store windows
@@ -148,10 +130,13 @@ ipcMain.on('MSG_FROM_RENDERER', (event,card) => {
 let timerWindow
 
 function createTimerWindow() {
+  Menu.setApplicationMenu(null)
   // Create the browser window.
   timerWindow = new BrowserWindow({
-    width: 1024,
-    height: 768,
+    width: 250,
+    height: 125,
+    titleBarStyle: "hidden",
+    alwaysOnTop: true,
     show: false,
     // You need to activate `nativeWindowOpen`
     webPreferences: { nativeWindowOpen: true },
@@ -164,7 +149,7 @@ function createTimerWindow() {
 
     // Open the DevTools automatically if developing
     if (isDev) {
-      timerWindow.webContents.openDevTools();
+      //timerWindow.webContents.openDevTools();
 
       timerWindow.webContents.on("context-menu", (e, props) => {
         const { x, y } = props;
@@ -180,24 +165,6 @@ function createTimerWindow() {
       });
     }
   });
-
-  timerWindow.webContents.on('new-window',
-    (event, url, frameName, disposition, options, additionalFeatures) =>
-    {
-      // This is the name we chose for our window. You can have multiple names for
-      // multiple windows and each have their options
-      if (frameName === 'NewWindowComponent ') {
-        event.preventDefault();
-        Object.assign(options, {
-          // This will prevent interactions with the timerWindow
-          parent: timerWindow,
-          width: 300,
-          height: 300,
-          // You can also set `left` and `top` positions
-        });
-        event.newGuest = new BrowserWindow(options);
-      }
-    });
 
   // Emitted when the window is closed.
   timerWindow.on("closed", function() {
